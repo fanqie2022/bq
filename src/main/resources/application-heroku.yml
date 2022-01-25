@@ -1,2 +1,3 @@
 server:
-  port: $PORT
+  ssl:
+    enabled: false
