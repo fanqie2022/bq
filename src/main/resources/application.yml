@@ -3,8 +3,8 @@ spring:
     active: heroku
 
 server:
-  port: 8443
   ssl:
+    enabled: true
     key-store: classpath:keystore/fishpi.p12
     key-store-password: fishing
     key-store-type: PKCS12
