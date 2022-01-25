@@ -1,6 +1,5 @@
-package io.dannio.fishpi;
+package io.dannio.fishpi.bot;
 
-import io.dannio.fishpi.bot.FishpiBot;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
