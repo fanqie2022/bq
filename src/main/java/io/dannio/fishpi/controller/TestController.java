@@ -10,7 +10,7 @@ public class TestController {
 
 
     @RequestMapping("/echo")
-    public String echo(@RequestParam String param) {
+    public String echo(@RequestParam("param") String param) {
         return param;
     }
 }
