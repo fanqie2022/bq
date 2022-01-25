@@ -26,16 +26,6 @@ public class FishpiBot extends TelegramWebhookBot {
         return "5211063652:AAEhRVrSBXyaLnXG0BAEIbdnQW02mYNaeKA";
     }
 
-    @SneakyThrows
-    public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            SendMessage message = new SendMessage();
-            message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            message.setText("回复的内容");
-            execute(message);
-        }
-
-    }
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
@@ -49,7 +39,7 @@ public class FishpiBot extends TelegramWebhookBot {
 
     @Override
     public String getBotPath() {
-        return "";
+        return "https://fishpi-bot.herokuapp.com/";
     }
 
 }
