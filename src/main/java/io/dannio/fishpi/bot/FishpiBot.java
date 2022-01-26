@@ -40,7 +40,7 @@ public class FishpiBot extends SpringWebhookBot {
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         log.info("webhook received [{}]", update);
         final SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChat().getUserName());
+        message.setChatId(String.valueOf(update.getMessage().getChatId()));
         message.setText("copied");
         return message;
     }
