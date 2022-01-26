@@ -15,12 +15,15 @@ import org.telegram.telegrambots.updatesreceivers.DefaultWebhook;
 @Configuration
 public class BotConfig {
 
+    @Value("${bot.webhook-url}")
+    private String webhookUrl;
+
     @Value("${server.port}")
-    public Integer port;
+    private Integer port;
 
     @Bean
     public SetWebhook setWebhookInstance() {
-        return SetWebhook.builder().url("https://fishpi-bot.herokuapp.com").build();
+        return SetWebhook.builder().url(this.webhookUrl).build();
     }
 
     @Bean
@@ -31,14 +34,13 @@ public class BotConfig {
         DefaultWebhook defaultWebhook = new DefaultWebhook();
 
         defaultWebhook.setInternalUrl(
-                "http://localhost:" + port);
+                "http://localhost:" + this.port);
         // the port to start the server, on the localhost computer, on the server it
         // be the server address
-        //   defaultWebhook.registerWebhook(fishpiBot);
 
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class, defaultWebhook);
 
-        log.info("SetWebHook from fishpi bot {}", setWebhookInstance);
+        log.info("SetWebHook from fishpi bot [{}]", setWebhookInstance);
         fishpiBot.getBotUsername();
         telegramBotsApi.registerBot(fishpiBot, setWebhookInstance);
         return fishpiBot;

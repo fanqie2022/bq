@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 $JAVA_OPTS -jar build/libs/fishpi-bot-1.0.0.jar
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/fishpi-bot-1.0.0.jar --spring.profiles.active=prod
