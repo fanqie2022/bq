@@ -1,5 +1,6 @@
 package io.dannio.fishpi.bot;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -9,25 +10,29 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 
 @Slf4j
+@Getter
 public class FishpiBot extends SpringWebhookBot {
 
+    private final String botUsername;
 
-    public FishpiBot(SetWebhook setWebhook) {
+    private final String botToken;
+
+    private final String botPath;
+
+
+    public FishpiBot(SetWebhook setWebhook, String botUsername, String botToken, String botPath) {
         super(setWebhook);
+        this.botUsername = botUsername;
+        this.botToken = botToken;
+        this.botPath = botPath;
     }
 
-    public FishpiBot(DefaultBotOptions options, SetWebhook setWebhook) {
+
+    public FishpiBot(DefaultBotOptions options, SetWebhook setWebhook, String botUsername, String botToken, String botPath) {
         super(options, setWebhook);
-    }
-
-    @Override
-    public String getBotUsername() {
-        return "fish_pi_bot";
-    }
-
-    @Override
-    public String getBotToken() {
-        return "5211063652:AAEhRVrSBXyaLnXG0BAEIbdnQW02mYNaeKA";
+        this.botUsername = botUsername;
+        this.botToken = botToken;
+        this.botPath = botPath;
     }
 
 
@@ -40,10 +45,5 @@ public class FishpiBot extends SpringWebhookBot {
         return message;
     }
 
-
-    @Override
-    public String getBotPath() {
-        return "https://fishpi-bot.herokuapp.com/";
-    }
 
 }
