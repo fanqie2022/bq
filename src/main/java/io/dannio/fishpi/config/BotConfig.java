@@ -44,7 +44,7 @@ public class BotConfig {
         DefaultWebhook defaultWebhook = new DefaultWebhook();
 
         // the port to start the server, on the localhost computer, on the server it be the server address
-        defaultWebhook.setInternalUrl("http://localhost:" + this.port);
+        defaultWebhook.setInternalUrl("http://0.0.0.0:" + this.port);
 
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class, defaultWebhook);
 
