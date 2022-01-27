@@ -1,2 +1,2 @@
-bot:
-  webhook-url: https://fishpi-bot.herokuapp.com
+webhook:
+  url: https://fishpi-bot.herokuapp.com

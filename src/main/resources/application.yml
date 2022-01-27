@@ -1,4 +1,4 @@
-server:
+webhook:
   port: 8080
 
 bot:

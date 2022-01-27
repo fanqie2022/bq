@@ -1,11 +1,10 @@
 package io.dannio.fishpi.config;
 
-import io.dannio.fishpi.bot.FishpiBot;
 import io.dannio.fishpi.properties.BotProperty;
+import io.dannio.fishpi.properties.WebhookProperty;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.CommandRegistry;
@@ -19,25 +18,20 @@ import org.telegram.telegrambots.updatesreceivers.DefaultWebhook;
 @Configuration
 public class BotConfig {
 
+    private final WebhookProperty webhookProperty;
 
-    @Value("${bot.webhook-url}")
-    private final String webhookUrl;
-
-    @Value("${server.port}")
-    private final Integer port;
-
-    private final BotProperty property;
+    private final BotProperty botProperty;
 
 
     @Bean
     public CommandRegistry commandRegistry() {
-        return new CommandRegistry(true,property::getPath);
+        return new CommandRegistry(true, botProperty::getPath);
     }
 
 
     @Bean
     public SetWebhook setWebhook() {
-        return SetWebhook.builder().url(this.webhookUrl).build();
+        return SetWebhook.builder().url(webhookProperty.getUrl()).build();
     }
 
     @Bean
@@ -45,7 +39,7 @@ public class BotConfig {
 
         DefaultWebhook defaultWebhook = new DefaultWebhook();
         // the port to start the server, on the localhost computer, on the server it be the server address
-        defaultWebhook.setInternalUrl("http://0.0.0.0:" + this.port);
+        defaultWebhook.setInternalUrl("http://0.0.0.0:" + webhookProperty.getPort());
 
         return defaultWebhook;
     }

@@ -5,13 +5,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties("bot")
-public @Data class BotProperty {
+@ConfigurationProperties("webhook")
+public @Data class WebhookProperty {
 
-    private String username;
+    private String url;
 
-    private String token;
-
-    private String path;
+    private Integer port;
 
 }

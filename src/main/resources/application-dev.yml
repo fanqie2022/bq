@@ -1,2 +1,2 @@
-bot:
-  webhook-url: http://localhost:8080
+webhook:
+  url: http://localhost:8080
