@@ -1,10 +1,9 @@
 package io.dannio.fishpi.bot;
 
+import io.dannio.fishpi.properties.BotProperty;
 import io.dannio.fishpi.service.FishpiService;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -20,32 +19,18 @@ import java.util.List;
 import static io.dannio.fishpi.util.JsonUtils.toJson;
 
 @Slf4j
-@Getter
 @Component
 public class FishpiBot extends SpringWebhookBot {
 
-    private final SetWebhook setWebhook;
-
     private final FishpiService service;
 
-    private final String botUsername;
-
-    private final String botToken;
-
-    private final String botPath;
+    private final BotProperty property;
 
 
-    public FishpiBot(SetWebhook setWebhook,
-                     FishpiService service,
-                     @Value("${bot.username}") String botUsername,
-                     @Value("${bot.token}")    String botToken,
-                     @Value("${bot.path}")     String botPath) {
+    public FishpiBot(SetWebhook setWebhook, FishpiService service, BotProperty property) {
         super(setWebhook);
         this.service = service;
-        this.setWebhook = setWebhook;
-        this.botUsername = botUsername;
-        this.botToken = botToken;
-        this.botPath = botPath;
+        this.property = property;
     }
 
 
@@ -54,9 +39,7 @@ public class FishpiBot extends SpringWebhookBot {
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         log.info("Webhook received update[{}]", toJson(update));
 
-        service.receive(update);
-
-        List<PartialBotApiMethod<Message>> messages =  service.receive(update);
+        List<PartialBotApiMethod<Message>> messages = service.receive(this, update);
         messages.forEach(this::executeMessage);
         log.info("Webhook answer update[id:{}] messages size[{}] ", update.getUpdateId(), messages.size());
 
@@ -75,5 +58,20 @@ public class FishpiBot extends SpringWebhookBot {
         }
     }
 
+
+    @Override
+    public String getBotPath() {
+        return property.getPath();
+    }
+
+    @Override
+    public String getBotUsername() {
+        return property.getUsername();
+    }
+
+    @Override
+    public String getBotToken() {
+        return property.getToken();
+    }
 
 }

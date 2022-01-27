@@ -1,27 +1,39 @@
 package io.dannio.fishpi.config;
 
 import io.dannio.fishpi.bot.FishpiBot;
+import io.dannio.fishpi.properties.BotProperty;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.telegram.telegrambots.extensions.bots.commandbot.commands.CommandRegistry;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import org.telegram.telegrambots.updatesreceivers.DefaultWebhook;
 
 @Slf4j
+@AllArgsConstructor
 @Configuration
 public class BotConfig {
 
 
     @Value("${bot.webhook-url}")
-    private String webhookUrl;
+    private final String webhookUrl;
 
     @Value("${server.port}")
-    private Integer port;
+    private final Integer port;
+
+    private final BotProperty property;
+
+
+    @Bean
+    public CommandRegistry commandRegistry() {
+        return new CommandRegistry(true,property::getPath);
+    }
+
 
     @Bean
     public SetWebhook setWebhook() {
