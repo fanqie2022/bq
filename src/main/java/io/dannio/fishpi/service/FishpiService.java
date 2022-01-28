@@ -26,8 +26,11 @@ public class FishpiService {
     public List<PartialBotApiMethod<Message>> receive(FishpiBot bot, Update update) {
 
         List<PartialBotApiMethod<Message>> answers = new ArrayList<>();
-        Message message = update.getMessage();
+        if (!update.hasMessage()) {
+            return answers;
+        }
 
+        Message message = update.getMessage();
         if (message.isCommand()) {
             if (!registry.executeCommand(bot, message)) {
                 //we have received a not registered command, handle it as invalid
