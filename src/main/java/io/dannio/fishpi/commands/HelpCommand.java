@@ -25,18 +25,23 @@ public class HelpCommand extends BotCommand {
     @Setter
     private BotCommandRegistry commandRegistry;
 
+
     public HelpCommand() {
         super(COMMAND_IDENTIFIER, "Get all the commands this bot provides");
     }
 
+
     @SneakyThrows
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
+    public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
 
         StringBuilder helpMessageBuilder = new StringBuilder("<b>Help</b>\n");
         helpMessageBuilder.append("These are the registered commands for this Bot:\n\n");
 
         for (IBotCommand botCommand : commandRegistry.getRegisteredCommands()) {
+            if (botCommand instanceof StopCommand) {
+                continue;
+            }
             helpMessageBuilder.append(botCommand.toString()).append("\n\n");
         }
 
@@ -44,7 +49,6 @@ public class HelpCommand extends BotCommand {
         helpMessage.setChatId(chat.getId().toString());
         helpMessage.enableHtml(true);
         helpMessage.setText(helpMessageBuilder.toString());
-
 
         absSender.execute(helpMessage);
     }

@@ -18,13 +18,15 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 @Component
 public class StopCommand extends BotCommand {
 
+
     public StopCommand() {
         super("stop", "With this command you can stop the Bot");
     }
 
+
     @SneakyThrows
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
+    public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
 
         SendMessage answer = new SendMessage();
         answer.setChatId(chat.getId().toString());

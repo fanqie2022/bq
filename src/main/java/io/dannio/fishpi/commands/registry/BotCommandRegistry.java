@@ -33,6 +33,7 @@ public class BotCommandRegistry implements ICommandRegistry {
                 .forEach(this.commandRegistry::register);
     }
 
+
     private int sort(BotCommand botCommand, BotCommand botCommand1) {
         if (botCommand1 != null && HelpCommand.COMMAND_IDENTIFIER.equals(botCommand1.getCommandIdentifier())) {
             return -1;

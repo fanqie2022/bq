@@ -10,17 +10,17 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 /**
- * This commands starts the conversation with the bot
+ * This commands link the account of fishpi site with the bot
  *
  */
 @Slf4j
 @Component
-public class StartCommand extends BotCommand {
+public class LinkCommand extends BotCommand {
 
 
-    public StartCommand() {
-        super("start", "With this command you can start the Bot");
-    }
+    public LinkCommand() {
+        super("link", "link to your fishpi account.");
+}
 
 
     @SneakyThrows
