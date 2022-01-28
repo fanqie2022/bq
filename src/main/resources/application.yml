@@ -1,5 +1,5 @@
 webhook:
-  port: 8080
+  port: ${PORT:8080}
 
 bot:
   username: fish_pi_bot

@@ -41,10 +41,10 @@ public class FishpiService {
     }
 
 
-    SendMessage answerMessage(Long chatId, String answerText) {
+    SendMessage answerMessage(Long chatId, String message) {
         final SendMessage answer = new SendMessage();
         answer.setChatId(String.valueOf(chatId));
-        answer.setText("world");
+        answer.setText(message);
         return answer;
     }
 }
