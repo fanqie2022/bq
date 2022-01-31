@@ -45,9 +45,11 @@ public class BotConfig {
     }
 
 
+    private final CustomWebhook customWebhook;
+
     @Bean
     @SneakyThrows
     public TelegramBotsApi telegramBotsApi() {
-        return new TelegramBotsApi(DefaultBotSession.class, defaultWebhook());
+        return new TelegramBotsApi(DefaultBotSession.class, customWebhook);
     }
 }
