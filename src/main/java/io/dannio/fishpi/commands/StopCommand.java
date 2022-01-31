@@ -29,9 +29,9 @@ public class StopCommand extends BotCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
 
-        SendMessage.builder()
+        absSender.execute(SendMessage.builder()
                 .chatId(chat.getId().toString())
                 .text("Good bye" + user.getUserName() +".\n Hope to see you soon!")
-                .parseMode(ParseMode.HTML).build();
+                .parseMode(ParseMode.HTML).build());
     }
 }

@@ -28,9 +28,9 @@ public class StartCommand extends BotCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
 
-        SendMessage.builder()
+        absSender.execute(SendMessage.builder()
                 .chatId(chat.getId().toString())
                 .text("hello world")
-                .parseMode(ParseMode.HTML).build();
+                .parseMode(ParseMode.HTML).build());
     }
 }
