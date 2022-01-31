@@ -7,10 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.IBotCommand;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
+
+import java.util.stream.Collectors;
 
 /**
  * This command helps the user to find the command they need
@@ -35,21 +38,31 @@ public class HelpCommand extends BotCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
 
-        StringBuilder helpMessageBuilder = new StringBuilder("<b>Help</b>\n");
-        helpMessageBuilder.append("These are the registered commands for this Bot:\n\n");
+        String header = "<b>Help</b>\nThese are the registered commands for this Bot:\n\n";
 
-        for (IBotCommand botCommand : commandRegistry.getRegisteredCommands()) {
-            if (botCommand instanceof StopCommand) {
-                continue;
-            }
-            helpMessageBuilder.append(botCommand.toString()).append("\n\n");
+        final String text = commandRegistry.getRegisteredCommands().stream()
+                .filter(this::filter)
+                .sorted(this::sort)
+                .map(Object::toString)
+                .collect(Collectors.joining("\n\n"));
+
+        absSender.execute(SendMessage.builder()
+                .chatId(chat.getId().toString())
+                .text(header + text)
+                .parseMode(ParseMode.HTML).build());
+    }
+
+
+    private boolean filter(IBotCommand iBotCommand) {
+        return !(iBotCommand instanceof StartCommand)
+                && !(iBotCommand instanceof StopCommand);
+    }
+
+
+    private int sort(IBotCommand iBotCommand, IBotCommand iBotCommand1) {
+        if (iBotCommand != null && HelpCommand.COMMAND_IDENTIFIER.equals(iBotCommand.getCommandIdentifier())) {
+            return -1;
         }
-
-        SendMessage helpMessage = new SendMessage();
-        helpMessage.setChatId(chat.getId().toString());
-        helpMessage.enableHtml(true);
-        helpMessage.setText(helpMessageBuilder.toString());
-
-        absSender.execute(helpMessage);
+        return 1;
     }
 }

@@ -22,27 +22,18 @@ public class BotCommandRegistry implements ICommandRegistry {
 
     private final CommandRegistry commandRegistry;
 
-    private final List<BotCommand> botCommands;
+    private final List<? extends BotCommand> botCommands;
 
 
     @PostConstruct
     public void registerCommands() {
         botCommands.stream()
                 .peek(this::putRegistry)
-                .sorted(this::sort)
                 .forEach(this.commandRegistry::register);
     }
 
 
-    private int sort(BotCommand botCommand, BotCommand botCommand1) {
-        if (botCommand1 != null && HelpCommand.COMMAND_IDENTIFIER.equals(botCommand1.getCommandIdentifier())) {
-            return -1;
-        }
-        return 0;
-    }
-
-
-    private void putRegistry(BotCommand botCommand) {
+    private <T extends BotCommand> void putRegistry(T botCommand) {
         if (botCommand instanceof HelpCommand) {
             ((HelpCommand) botCommand).setCommandRegistry(this);
         }

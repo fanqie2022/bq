@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -27,9 +28,9 @@ public class StartCommand extends BotCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
 
-        SendMessage answer = new SendMessage();
-        answer.setChatId(chat.getId().toString());
-        answer.setText("hello world!");
-        absSender.execute(answer);
+        SendMessage.builder()
+                .chatId(chat.getId().toString())
+                .text("hello world")
+                .parseMode(ParseMode.HTML).build();
     }
 }
