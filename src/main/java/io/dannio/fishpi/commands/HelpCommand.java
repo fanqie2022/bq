@@ -60,9 +60,9 @@ public class HelpCommand extends BotCommand {
 
 
     private int sort(IBotCommand iBotCommand, IBotCommand iBotCommand1) {
-        if (iBotCommand != null && HelpCommand.COMMAND_IDENTIFIER.equals(iBotCommand.getCommandIdentifier())) {
+        if (iBotCommand1 != null && HelpCommand.COMMAND_IDENTIFIER.equals(iBotCommand1.getCommandIdentifier())) {
             return -1;
         }
-        return 1;
+        return 0;
     }
 }

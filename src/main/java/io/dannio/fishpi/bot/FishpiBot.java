@@ -1,6 +1,7 @@
 package io.dannio.fishpi.bot;
 
 import io.dannio.fishpi.properties.BotProperty;
+import io.dannio.fishpi.service.ChatroomService;
 import io.dannio.fishpi.service.FishpiService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static io.dannio.fishpi.util.JsonUtils.toJson;
@@ -24,13 +27,21 @@ public class FishpiBot extends SpringWebhookBot {
 
     private final FishpiService service;
 
+    private final ChatroomService chatroomService;
+
     private final BotProperty property;
 
 
-    public FishpiBot(SetWebhook setWebhook, FishpiService service, BotProperty property) {
+    public FishpiBot(SetWebhook setWebhook, FishpiService service, ChatroomService chatroomService, BotProperty property) {
         super(setWebhook);
         this.service = service;
         this.property = property;
+        this.chatroomService = chatroomService;
+    }
+
+    @PostConstruct
+    public void initialize() {
+        this.chatroomService.setAbsSender(this);
     }
 
 
@@ -48,7 +59,7 @@ public class FishpiBot extends SpringWebhookBot {
 
 
     @SneakyThrows
-    private void executeMessage(PartialBotApiMethod<Message> message) {
+    public void executeMessage(PartialBotApiMethod<Message> message) {
         log.info("Webhook execute message[{}]", toJson(message));
         if (message instanceof SendMessage) {
             execute((SendMessage) message);

@@ -5,6 +5,7 @@ import io.dannio.fishpi.commands.registry.BotCommandRegistry;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.fish.api.FishApi;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -21,6 +22,9 @@ public class FishpiService {
 
     private final BotCommandRegistry registry;
 
+    private final ChatroomService chatroom;
+
+    private final FishApi fishApi;
 
     @SneakyThrows
     public List<PartialBotApiMethod<Message>> receive(FishpiBot bot, Update update) {
@@ -31,7 +35,9 @@ public class FishpiService {
         }
 
         Message message = update.getMessage();
-        if (message.isCommand()) {
+        if (message.isGroupMessage()) {
+            chatroom.messageToFishPi(message);
+        } else if (message.isCommand()) {
             if (!registry.executeCommand(bot, message)) {
                 //we have received a not registered command, handle it as invalid
                 answers.add(answerMessage(message.getChatId(), "Unrecognized command. Say what?"));
@@ -44,7 +50,7 @@ public class FishpiService {
     }
 
 
-    SendMessage answerMessage(Long chatId, String message) {
+    private SendMessage answerMessage(Long chatId, String message) {
         final SendMessage answer = new SendMessage();
         answer.setChatId(String.valueOf(chatId));
         answer.setText(message);

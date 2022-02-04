@@ -1,5 +1,6 @@
 package io.dannio.fishpi.config;
 
+import io.dannio.fishpi.CustomWebhook;
 import io.dannio.fishpi.properties.BotProperty;
 import io.dannio.fishpi.properties.WebhookProperty;
 import lombok.AllArgsConstructor;

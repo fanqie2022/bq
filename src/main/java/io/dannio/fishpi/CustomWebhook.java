@@ -1,4 +1,4 @@
-package io.dannio.fishpi.config;
+package io.dannio.fishpi;
 
 import io.dannio.fishpi.properties.WebhookProperty;
 import lombok.RequiredArgsConstructor;
