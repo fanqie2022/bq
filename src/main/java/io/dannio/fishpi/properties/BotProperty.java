@@ -14,4 +14,6 @@ public @Data class BotProperty {
 
     private String path;
 
+    private String supergroupName;
+
 }

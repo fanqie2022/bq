@@ -16,20 +16,19 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 @Service
 public class ChatroomService {
 
-    public static final String CHATROOM_GROUP_ID = "-1001699722830";
+    @Setter
+    private String chatroomGroupId;
 
     @Setter
     private AbsSender absSender;
-
-    @Setter
-    private WebSocket webSocket;
 
 
     @SneakyThrows
     public void messageToTelegram(String text) {
         log.info("fishpi -> telegram message[{}]", text);
+
         absSender.execute(SendMessage.builder()
-                .chatId(CHATROOM_GROUP_ID)
+                .chatId(chatroomGroupId)
                 .text(text)
 //                .parseMode(ParseMode.HTML)
                 .build());

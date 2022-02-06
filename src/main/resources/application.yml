@@ -5,4 +5,5 @@ bot:
   username: fish_pi_bot
   token: 5211063652:AAEhRVrSBXyaLnXG0BAEIbdnQW02mYNaeKA
   path: fishpi
+  supergroup-name: fishpi_cr
 

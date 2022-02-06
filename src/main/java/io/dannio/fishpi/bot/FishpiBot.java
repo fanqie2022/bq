@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
@@ -40,8 +41,12 @@ public class FishpiBot extends SpringWebhookBot {
     }
 
     @PostConstruct
+    @SneakyThrows
     public void initialize() {
         this.chatroomService.setAbsSender(this);
+        this.chatroomService.setChatroomGroupId(this.execute(GetChat.builder()
+                .chatId(this.property.getSupergroupName())
+                .build()).getId().toString());
     }
 
 

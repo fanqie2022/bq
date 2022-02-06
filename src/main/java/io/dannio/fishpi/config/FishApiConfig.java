@@ -16,7 +16,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 @Configuration
 public class FishApiConfig {
 
-    private static final int reconnectDelays[] = {10000, 60000, 180000, 3000};
+    private static final int RECONNECT_DELAYS[] = {10000, 60000, 180000, 300000};
     private int reconnectTimes = 0;
 
     @Bean
@@ -48,7 +48,6 @@ public class FishApiConfig {
     public WebSocketClient webSocketClient(ChatroomService service) {
         return new WebSocketClient((webSocket, response) -> {
             webSocket.send("-hb-");
-            service.setWebSocket(webSocket);
             reconnectTimes = 0;
         }, (webSocket, i, s) -> {
             webSocket.close(i, s);
@@ -61,10 +60,10 @@ public class FishApiConfig {
 
     @SneakyThrows
     private void reconnect(ChatroomService service) {
-        if (reconnectTimes >= reconnectDelays.length) {
+        if (reconnectTimes >= RECONNECT_DELAYS.length) {
             return;
         }
-        Thread.sleep(reconnectDelays[reconnectTimes++]);
+        Thread.sleep(RECONNECT_DELAYS[reconnectTimes++]);
         webSocketClient(service);
     }
 
