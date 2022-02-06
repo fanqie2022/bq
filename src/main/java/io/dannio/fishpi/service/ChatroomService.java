@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 @Service
 public class ChatroomService {
 
-    public static final String CHATROOM_GROUP_ID = "-777480027";
+    public static final String CHATROOM_GROUP_ID = "-1001699722830";
 
     @Setter
     private AbsSender absSender;
