@@ -1,13 +1,10 @@
 package io.dannio.fishpi.service;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.WebSocket;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -34,7 +31,8 @@ public class ChatroomService {
         absSender.execute(SendMessage.builder()
                 .chatId(CHATROOM_GROUP_ID)
                 .text(text)
-                .parseMode(ParseMode.HTML).build());
+//                .parseMode(ParseMode.HTML)
+                .build());
     }
 
 
