@@ -37,6 +37,7 @@ public class ChatroomService {
             case MSG:
                 final ChatMessage chatMessage = (ChatMessage) chatroomMessage;
 
+                log.debug("supergroup Id [{}]", chatroomGroupId);
                 absSender.execute(SendMessage.builder()
                         .chatId(chatroomGroupId)
                         .text(chatMessage.getMarkdownContent())

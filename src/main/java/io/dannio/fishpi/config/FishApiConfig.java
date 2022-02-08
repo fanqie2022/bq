@@ -5,6 +5,7 @@ import io.github.danniod.fish4j.api.FishApi;
 import io.github.danniod.fish4j.api.FishApiImpl;
 import io.github.danniod.fish4j.client.WebSocketClient;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+@Slf4j
 @Configuration
 public class FishApiConfig {
 
@@ -53,6 +55,7 @@ public class FishApiConfig {
             webSocket.close(i, s);
             reconnect(service);
         }, (webSocket, throwable, response) -> {
+            log.warn("websocket broken. onFailure", throwable);
             reconnect(service);
         }, (webSocket, text) -> service.messageToTelegram(text));
     }
