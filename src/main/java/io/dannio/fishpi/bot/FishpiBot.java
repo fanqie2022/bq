@@ -45,7 +45,7 @@ public class FishpiBot extends SpringWebhookBot {
     public void initialize() {
         this.chatroomService.setAbsSender(this);
         this.chatroomService.setChatroomGroupId(this.execute(GetChat.builder()
-                .chatId(this.property.getSupergroupName())
+                .chatId("@" + this.property.getSupergroupName())
                 .build()).getId().toString());
     }
 
