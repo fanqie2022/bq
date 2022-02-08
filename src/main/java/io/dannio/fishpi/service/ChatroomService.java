@@ -1,10 +1,14 @@
 package io.dannio.fishpi.service;
 
+import io.github.danniod.fish4j.api.FishApi;
+import io.github.danniod.fish4j.entites.ChatroomMessage;
+import io.github.danniod.fish4j.entites.chatroom.*;
+import io.github.danniod.fish4j.enums.ChatroomMessageType;
+import io.github.danniod.fish4j.param.MessageParam;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.WebSocket;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -21,6 +25,8 @@ public class ChatroomService {
 
     @Setter
     private AbsSender absSender;
+
+    private final FishApi fishApi;
 
 
     @SneakyThrows

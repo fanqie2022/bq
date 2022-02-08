@@ -1,13 +1,13 @@
 package io.dannio.fishpi.config;
 
 import io.dannio.fishpi.service.ChatroomService;
+import io.github.danniod.fish4j.api.FishApi;
+import io.github.danniod.fish4j.api.FishApiImpl;
+import io.github.danniod.fish4j.client.WebSocketClient;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
-import org.fish.api.FishApi;
-import org.fish.api.FishApiImpl;
-import org.fish.client.WebSocketClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;

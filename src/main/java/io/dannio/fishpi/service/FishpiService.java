@@ -2,10 +2,10 @@ package io.dannio.fishpi.service;
 
 import io.dannio.fishpi.bot.FishpiBot;
 import io.dannio.fishpi.commands.registry.BotCommandRegistry;
+import io.github.danniod.fish4j.api.FishApi;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.fish.api.FishApi;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -35,7 +35,7 @@ public class FishpiService {
         }
 
         Message message = update.getMessage();
-        if (message.isGroupMessage()) {
+        if (message.isSuperGroupMessage()) {
             chatroom.messageToFishPi(message);
         } else if (message.isCommand()) {
             if (!registry.executeCommand(bot, message)) {

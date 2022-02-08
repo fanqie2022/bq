@@ -1,9 +1,9 @@
 package io.dannio.fishpi.service;
 
+import io.github.danniod.fish4j.api.FishApi;
+import io.github.danniod.fish4j.entites.FishPiUser;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.fish.api.FishApi;
-import org.fish.entites.FishPiUser;
 import org.springframework.stereotype.Service;
 
 @Slf4j

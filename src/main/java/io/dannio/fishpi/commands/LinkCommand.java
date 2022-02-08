@@ -1,9 +1,9 @@
 package io.dannio.fishpi.commands;
 
 import io.dannio.fishpi.service.CommandService;
+import io.github.danniod.fish4j.entites.FishPiUser;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.fish.entites.FishPiUser;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
