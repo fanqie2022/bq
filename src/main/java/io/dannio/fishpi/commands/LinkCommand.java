@@ -37,7 +37,7 @@ public class LinkCommand extends BotCommand {
         if (arguments.length == 0) {
             reply = "send '/link apiKey' to bing your fishpi account";
         } else {
-            final FishPiUser fishPiUser = service.LinkFishAccount(arguments[0]);
+            final FishPiUser fishPiUser = service.linkFishAccount(arguments[0]);
             // 🍺 cheers!
             reply = "\uD83C\uDF7A cheers!\nHello "
                     + (fishPiUser.getUserNickname() != null ? fishPiUser.getUserNickname() : fishPiUser.getUserName())

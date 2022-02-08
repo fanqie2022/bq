@@ -30,12 +30,12 @@ public class ChatroomService {
 
 
     @SneakyThrows
-    public void messageToTelegram(ChatroomMessage chatroomMessage) {
+    public void messageToTelegram(ChatroomMessage message) {
 
-        switch (ChatroomMessageType.fromType(chatroomMessage.getType())) {
+        switch (ChatroomMessageType.fromType(message.getType())) {
 
             case MSG:
-                final ChatMessage chatMessage = (ChatMessage) chatroomMessage;
+                final ChatMessage chatMessage = (ChatMessage) message;
 
                 log.debug("supergroup Id [{}]", chatroomGroupId);
                 absSender.execute(SendMessage.builder()
@@ -45,19 +45,19 @@ public class ChatroomService {
                         .build());
                 break;
             case ONLINE:
-                final OnlineMessage onlineMessage = (OnlineMessage) chatroomMessage;
+                final OnlineMessage onlineMessage = (OnlineMessage) message;
 
                 break;
             case RED_PACKET:
-                final RedPacketMessage redPacketMessage = (RedPacketMessage) chatroomMessage;
+                final RedPacketMessage redPacketMessage = (RedPacketMessage) message;
 
                 break;
             case RED_PACKET_STATUS:
-                final RedPacketStatusMessage redPacketStatusMessage = (RedPacketStatusMessage) chatroomMessage;
+                final RedPacketStatusMessage redPacketStatusMessage = (RedPacketStatusMessage) message;
 
                 break;
             case REVOKE:
-                final RevokeMessage revokeMessage = (RevokeMessage) chatroomMessage;
+                final RevokeMessage revokeMessage = (RevokeMessage) message;
 
                 break;
             default:

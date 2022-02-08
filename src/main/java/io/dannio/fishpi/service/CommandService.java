@@ -14,7 +14,7 @@ public class CommandService {
     private final FishApi fishApi;
 
 
-    public FishPiUser LinkFishAccount(String apiKey) {
+    public FishPiUser linkFishAccount(String apiKey) {
         return fishApi.getUser(apiKey);
     }
 }
