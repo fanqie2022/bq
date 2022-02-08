@@ -30,19 +30,49 @@ public class ChatroomService {
 
 
     @SneakyThrows
-    public void messageToTelegram(String text) {
-        log.info("fishpi -> telegram message[{}]", text);
+    public void messageToTelegram(ChatroomMessage chatroomMessage) {
 
-        absSender.execute(SendMessage.builder()
-                .chatId(chatroomGroupId)
-                .text(text)
-//                .parseMode(ParseMode.HTML)
-                .build());
+        switch (ChatroomMessageType.fromType(chatroomMessage.getType())) {
+
+            case MSG:
+                final ChatMessage chatMessage = (ChatMessage) chatroomMessage;
+
+                absSender.execute(SendMessage.builder()
+                        .chatId(chatroomGroupId)
+                        .text(chatMessage.getMarkdownContent())
+                        .parseMode(ParseMode.HTML)
+                        .build());
+                break;
+            case ONLINE:
+                final OnlineMessage onlineMessage = (OnlineMessage) chatroomMessage;
+
+                break;
+            case RED_PACKET:
+                final RedPacketMessage redPacketMessage = (RedPacketMessage) chatroomMessage;
+
+                break;
+            case RED_PACKET_STATUS:
+                final RedPacketStatusMessage redPacketStatusMessage = (RedPacketStatusMessage) chatroomMessage;
+
+                break;
+            case REVOKE:
+                final RevokeMessage revokeMessage = (RevokeMessage) chatroomMessage;
+
+                break;
+            default:
+
+        }
+
     }
 
 
     public void messageToFishPi(Message message) {
         log.info("telegram -> fishpi message[{}]", message);
+
+        fishApi.sendMessage(MessageParam.builder()
+                .apiKey("FgKt3UMtyNiimukgWBqYyzJp4VrUPKVd")
+                .content(message.getText())
+                .build());
     }
 
 }
