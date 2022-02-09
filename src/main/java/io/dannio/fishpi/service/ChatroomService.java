@@ -37,11 +37,16 @@ public class ChatroomService {
             case MSG:
                 final ChatMessage chatMessage = (ChatMessage) message;
 
-                log.debug("supergroup Id [{}]", chatroomGroupId);
+                final String user = chatMessage.getUserNickname() != null
+                        ? String.format("%s(%s)", chatMessage.getUserNickname(), chatMessage.getUserName())
+                        : chatMessage.getUserName();
+
+                final String content = String.format("%s:\n%s", user, chatMessage.getMarkdownContent());
+
                 absSender.execute(SendMessage.builder()
                         .chatId(chatroomGroupId)
-                        .text(chatMessage.getMarkdownContent())
-                        .parseMode(ParseMode.HTML)
+                        .text(content)
+                        .parseMode(ParseMode.MARKDOWNV2)
                         .build());
                 break;
             case ONLINE:
@@ -68,12 +73,14 @@ public class ChatroomService {
 
 
     public void messageToFishPi(Message message) {
-        log.info("telegram -> fishpi message[{}]", message);
+        log.info("telegram -> fishpi message[{}]", message.getText());
 
-        fishApi.sendMessage(MessageParam.builder()
-                .apiKey("FgKt3UMtyNiimukgWBqYyzJp4VrUPKVd")
-                .content(message.getText())
-                .build());
+        if (message.hasText()) {
+            fishApi.sendMessage(MessageParam.builder()
+                    .apiKey("FgKt3UMtyNiimukgWBqYyzJp4VrUPKVd")
+                    .content(message.getText())
+                    .build());
+        }
     }
 
 }
