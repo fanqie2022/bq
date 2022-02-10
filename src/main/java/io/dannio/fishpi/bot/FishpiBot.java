@@ -7,18 +7,12 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 import static io.dannio.fishpi.util.JsonUtils.toJson;
 
@@ -60,18 +54,6 @@ public class FishpiBot extends SpringWebhookBot {
         service.receive(this, update);
 
         return null;
-    }
-
-
-    @SneakyThrows
-    public void executeMessage(PartialBotApiMethod<Message> message) {
-        log.info("Webhook execute message[{}]", toJson(message));
-        if (message instanceof SendMessage) {
-            execute((SendMessage) message);
-        }
-        if (message instanceof SendPhoto) {
-            execute((SendPhoto) message);
-        }
     }
 
 
