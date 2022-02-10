@@ -1,2 +1,5 @@
 webhook:
   url: https://fishpi-bot.herokuapp.com
+
+bot:
+  supergroup-name: fishpi_cr
