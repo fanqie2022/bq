@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -37,11 +38,12 @@ public class ChatroomService {
             case MSG:
                 final ChatMessage chatMessage = (ChatMessage) message;
 
-                final String user = chatMessage.getUserNickname() != null
-                        ? String.format("%s(%s)", chatMessage.getUserNickname(), chatMessage.getUserName())
+                final String user = StringUtils.isNotBlank(chatMessage.getUserNickname())
+                        ? String.format("%s\\(%s\\)", chatMessage.getUserNickname(), chatMessage.getUserName())
                         : chatMessage.getUserName();
 
                 final String content = String.format("%s:\n%s", user, chatMessage.getMarkdownContent());
+                log.info("-> telegram msg[{}]", content);
 
                 absSender.execute(SendMessage.builder()
                         .chatId(chatroomGroupId)

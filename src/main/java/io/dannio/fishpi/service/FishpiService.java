@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +28,10 @@ public class FishpiService {
     private final FishApi fishApi;
 
     @SneakyThrows
-    public List<PartialBotApiMethod<Message>> receive(FishpiBot bot, Update update) {
+    public void receive(FishpiBot bot, Update update) {
 
-        List<PartialBotApiMethod<Message>> answers = new ArrayList<>();
         if (!update.hasMessage()) {
-            return answers;
+            return;
         }
 
         Message message = update.getMessage();
@@ -40,20 +40,20 @@ public class FishpiService {
         } else if (message.isCommand()) {
             if (!registry.executeCommand(bot, message)) {
                 //we have received a not registered command, handle it as invalid
-                answers.add(answerMessage(message.getChatId(), "Unrecognized command. Say what?"));
+                answerMessage(bot, message.getChatId(), "Unknow command. Say what?");
             }
         } else {
-            answers.add(answerMessage(message.getChatId(), "hello"));
+            answerMessage(bot, message.getChatId(), "hello");
         }
 
-        return answers;
     }
 
 
-    private SendMessage answerMessage(Long chatId, String message) {
-        final SendMessage answer = new SendMessage();
-        answer.setChatId(String.valueOf(chatId));
-        answer.setText(message);
-        return answer;
+    @SneakyThrows
+    private void answerMessage(AbsSender absSender, Long chatId, String message) {
+        absSender.execute(SendMessage.builder()
+                .chatId(String.valueOf(chatId))
+                .text(message)
+                .build());
     }
 }

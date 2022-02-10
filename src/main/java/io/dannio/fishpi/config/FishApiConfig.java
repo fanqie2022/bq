@@ -9,16 +9,21 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 @Configuration
 public class FishApiConfig {
 
-    private static final int RECONNECT_DELAYS[] = {10000, 60000, 180000, 300000};
+    private static final int[] RECONNECT_DELAYS = {10000, 60000, 180000};
     private int reconnectTimes = 0;
 
     @Bean
@@ -48,21 +53,25 @@ public class FishApiConfig {
 
     @Bean
     public WebSocketClient webSocketClient(ChatroomService service) {
-        return new WebSocketClient((webSocket, response) -> {
+        ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1,
+                new BasicThreadFactory.Builder().namingPattern("ws-heartbeat-%d").daemon(true).build());
+
+        return new WebSocketClient((webSocket, response) -> executor.scheduleAtFixedRate(() -> {
             webSocket.send("-hb-");
-            reconnectTimes = 0;
-        }, (webSocket, i, s) -> {
+            log.info("Chatroom websocket heartbeat");
+        }, 0, 3, TimeUnit.MINUTES), (webSocket, i, s) -> {
             webSocket.close(i, s);
-            reconnect(service);
+            reconnect(executor, service);
         }, (webSocket, throwable, response) -> {
             log.warn("websocket broken. onFailure", throwable);
-            reconnect(service);
+            reconnect(executor, service);
         }, (webSocket, message) -> service.messageToTelegram(message));
     }
 
 
     @SneakyThrows
-    private void reconnect(ChatroomService service) {
+    private void reconnect(ScheduledExecutorService executor, ChatroomService service) {
+        executor.shutdown();
         if (reconnectTimes >= RECONNECT_DELAYS.length) {
             return;
         }

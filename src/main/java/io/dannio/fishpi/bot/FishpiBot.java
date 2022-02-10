@@ -44,7 +44,9 @@ public class FishpiBot extends SpringWebhookBot {
     @SneakyThrows
     public void initialize() {
         this.chatroomService.setAbsSender(this);
-        this.chatroomService.setChatroomGroupId(this.execute(GetChat.builder()
+        this.chatroomService.setChatroomGroupId(this.property.getSupergroupId() != null
+                ? this.property.getSupergroupId()
+                : this.execute(GetChat.builder()
                 .chatId("@" + this.property.getSupergroupName())
                 .build()).getId().toString());
     }
@@ -55,9 +57,7 @@ public class FishpiBot extends SpringWebhookBot {
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         log.info("Webhook received update[{}]", toJson(update));
 
-        List<PartialBotApiMethod<Message>> messages = service.receive(this, update);
-        messages.forEach(this::executeMessage);
-        log.info("Webhook answer update[id:{}] messages size[{}] ", update.getUpdateId(), messages.size());
+        service.receive(this, update);
 
         return null;
     }
