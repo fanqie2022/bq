@@ -4,6 +4,7 @@ import io.dannio.fishpi.service.ChatroomService;
 import io.github.danniod.fish4j.api.FishApi;
 import io.github.danniod.fish4j.api.FishApiImpl;
 import io.github.danniod.fish4j.client.WebSocketClient;
+import io.github.danniod.fish4j.entites.ChatroomMessage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -64,8 +65,17 @@ public class FishApiConfig {
             reconnect(executor, service);
         }, (webSocket, throwable, response) -> {
             log.warn("websocket broken. onFailure", throwable);
+            webSocket.close(1, throwable.getMessage());
             reconnect(executor, service);
-        }, (webSocket, message) -> service.messageToTelegram(message));
+        }, (webSocket, message) -> messageToTelegramCaught(service, message));
+    }
+
+    private void messageToTelegramCaught(ChatroomService service, ChatroomMessage message) {
+        try {
+            service.messageToTelegram(message);
+        } catch (Exception e) {
+            log.warn("drop bad message", e);
+        }
     }
 
 
