@@ -19,7 +19,7 @@ class DataProperties {
 
     @PostConstruct
     public void initialize() {
-        if (mkdirIfNotExists(new File(this.telegram)) && mkdirIfNotExists(new File(this.fishpi))) {
+        if (!mkdirIfNotExists(new File(this.telegram)) && !mkdirIfNotExists(new File(this.fishpi))) {
             throw new RuntimeException("app data store can not initialize");
         }
     }
@@ -27,6 +27,5 @@ class DataProperties {
 
     private boolean mkdirIfNotExists(File file) {
         return file.exists() || file.mkdirs();
-
     }
 }
