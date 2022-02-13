@@ -85,7 +85,6 @@ public class ChatroomService {
 
     @SneakyThrows
     public void messageToFishPi(Message message) {
-        log.info("telegram -> fishpi message[{}]", message.getText());
 
         if (message.hasText()) {
             sendMessage(message.getText());
@@ -99,9 +98,11 @@ public class ChatroomService {
             java.io.File videoFile = downloadFromTelegram(fileUrl, dataProperties.getTelegram() + java.io.File.separator + filePath);
             final String gifFile = dataProperties.getFishpi() + java.io.File.separator + filePath.replaceAll("\\.mp4", ".gif");
             convert2Gif(videoFile.getAbsolutePath(), gifFile, progress -> {
+                log.info("process status[{}], isEnd[{}]", progress.status, progress.isEnd());
                 if (progress.isEnd()) {
                     final java.io.File file = new java.io.File(gifFile);
                     final Storage upload = fishApi.upload(file);
+                    log.info("upload file[{}], result[{}]", file.getAbsolutePath(), upload);
                     final String picUrl = upload.getSuccessMap().get(file.getName());
                     if (picUrl != null) {
                         sendMessage(String.format("![%s](%s)", file.getName(), picUrl));
@@ -115,6 +116,8 @@ public class ChatroomService {
 
 
     private void sendMessage(String content) {
+        log.info("telegram -> fishpi message[{}]", content);
+
         fishApi.sendMessage(MessageParam.builder()
                 .apiKey("lRIEfO4Iqvn9fAhMxEHr9o6Ee15Aw3RQ")
                 .content(content)
