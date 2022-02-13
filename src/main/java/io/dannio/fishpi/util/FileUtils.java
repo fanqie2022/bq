@@ -19,6 +19,7 @@ public class FileUtils {
         Request request = new Request.Builder().url(fileUrl).build();
         OkHttpClient okHttpClient = new OkHttpClient();
         final File download = new File(fileName);
+        mkdirIfNotExists(download.getParentFile());
         final BufferedSink buffer = Okio.buffer(Okio.sink(download));
         buffer.writeAll(Objects.requireNonNull(okHttpClient.newCall(request).execute().body()).source());
         buffer.close();
@@ -28,10 +29,18 @@ public class FileUtils {
 
     @SneakyThrows
     public static void convert2Gif(String input, String output, ProgressListener listener) {
+        mkdirIfNotExists(new File(output).getParentFile());
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(input)
                 .addOutput(output)
                 .done();
         new Thread(new FFmpegExecutor().createJob(builder, listener)).start();
+    }
+
+
+    public static void mkdirIfNotExists(File file) {
+        if (!(file.exists() || file.mkdirs())) {
+            throw new RuntimeException("Cannot create folder: " + file.getAbsolutePath());
+        }
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.File;
 
+import static io.dannio.fishpi.util.FileUtils.mkdirIfNotExists;
+
 @Component
 @ConfigurationProperties("app.data")
 public @Data
@@ -19,13 +21,8 @@ class DataProperties {
 
     @PostConstruct
     public void initialize() {
-        if (!mkdirIfNotExists(new File(this.telegram)) && !mkdirIfNotExists(new File(this.fishpi))) {
-            throw new RuntimeException("app data store can not initialize");
-        }
+        mkdirIfNotExists(new File(this.telegram));
+        mkdirIfNotExists(new File(this.fishpi));
     }
 
-
-    private boolean mkdirIfNotExists(File file) {
-        return file.exists() || file.mkdirs();
-    }
 }
