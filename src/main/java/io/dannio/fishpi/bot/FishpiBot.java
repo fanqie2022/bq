@@ -1,6 +1,6 @@
 package io.dannio.fishpi.bot;
 
-import io.dannio.fishpi.properties.BotProperty;
+import io.dannio.fishpi.properties.BotProperties;
 import io.dannio.fishpi.service.ChatroomService;
 import io.dannio.fishpi.service.FishpiService;
 import lombok.SneakyThrows;
@@ -24,13 +24,13 @@ public class FishpiBot extends SpringWebhookBot {
 
     private final ChatroomService chatroomService;
 
-    private final BotProperty property;
+    private final BotProperties properties;
 
 
-    public FishpiBot(SetWebhook setWebhook, FishpiService service, ChatroomService chatroomService, BotProperty property) {
+    public FishpiBot(SetWebhook setWebhook, FishpiService service, ChatroomService chatroomService, BotProperties properties) {
         super(setWebhook);
         this.service = service;
-        this.property = property;
+        this.properties = properties;
         this.chatroomService = chatroomService;
     }
 
@@ -38,10 +38,10 @@ public class FishpiBot extends SpringWebhookBot {
     @SneakyThrows
     public void initialize() {
         this.chatroomService.setAbsSender(this);
-        this.chatroomService.setChatroomGroupId(this.property.getSupergroupName() == null
-                ? this.property.getSupergroupId()
+        this.chatroomService.setChatroomGroupId(this.properties.getSupergroupName() == null
+                ? this.properties.getSupergroupId()
                 : this.execute(GetChat.builder()
-                .chatId("@" + this.property.getSupergroupName())
+                .chatId("@" + this.properties.getSupergroupName())
                 .build()).getId().toString());
     }
 
@@ -59,17 +59,17 @@ public class FishpiBot extends SpringWebhookBot {
 
     @Override
     public String getBotPath() {
-        return property.getPath();
+        return properties.getPath();
     }
 
     @Override
     public String getBotUsername() {
-        return property.getUsername();
+        return properties.getUsername();
     }
 
     @Override
     public String getBotToken() {
-        return property.getToken();
+        return properties.getToken();
     }
 
 }

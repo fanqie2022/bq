@@ -3,3 +3,8 @@ webhook:
 
 bot:
   supergroup-name: fishpi_cr
+
+app:
+  data:
+    telegram: /app/data/telegram
+    fishpi: /app/data/fishpi

@@ -1,6 +1,6 @@
 package io.dannio.fishpi;
 
-import io.dannio.fishpi.properties.WebhookProperty;
+import io.dannio.fishpi.properties.WebhookProperties;
 import lombok.RequiredArgsConstructor;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.ssl.SSLContextConfigurator;
@@ -35,7 +35,7 @@ public class CustomWebhook implements Webhook {
 
     private RestApi restApi;
 
-    private final WebhookProperty webhookProperty;
+    private final WebhookProperties webhookProperties;
 
     private final ApplicationContext context;
 
@@ -92,7 +92,7 @@ public class CustomWebhook implements Webhook {
     }
 
     private URI getBaseUri() {
-        return URI.create(internalUrl == null ? "http://0.0.0.0:" + webhookProperty.getPort() : internalUrl);
+        return URI.create(internalUrl == null ? "http://0.0.0.0:" + webhookProperties.getPort() : internalUrl);
     }
 
     private static void validateServerKeystoreFile(String keyStore) throws TelegramApiException {

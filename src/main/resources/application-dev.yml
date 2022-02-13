@@ -3,3 +3,8 @@ webhook:
 
 bot:
   supergroup-id: -777480027
+
+app:
+  data:
+    telegram: ./data/telegram
+    fishpi: ./data/fishpi

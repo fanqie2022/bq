@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties("webhook")
-public @Data class WebhookProperty {
+public @Data class WebhookProperties {
 
     private String url;
 

@@ -1,6 +1,7 @@
 package io.dannio.fishpi.service;
 
 import io.dannio.fishpi.bot.FishpiBot;
+import io.dannio.fishpi.properties.DataProperties;
 import io.github.danniod.fish4j.api.FishApi;
 import io.github.danniod.fish4j.entites.ChatroomMessage;
 import io.github.danniod.fish4j.entites.Storage;
@@ -35,6 +36,8 @@ public class ChatroomService {
     private AbsSender absSender;
 
     private final FishApi fishApi;
+
+    private final DataProperties dataProperties;
 
 
     @SneakyThrows
@@ -93,15 +96,15 @@ public class ChatroomService {
             final File source = absSender.execute(GetFile.builder().fileId(animation.getFileId()).build());
             final String filePath = source.getFilePath();
             final String fileUrl = source.getFileUrl(((FishpiBot) absSender).getBotToken());
-            java.io.File videoFile = downloadFromTelegram(fileUrl, filePath);
-            final String gifFile = videoFile.getAbsolutePath().replaceAll("\\.mp4", ".gif");
+            java.io.File videoFile = downloadFromTelegram(fileUrl, dataProperties.getTelegram() + java.io.File.separator + filePath);
+            final String gifFile = dataProperties.getFishpi() + java.io.File.separator + filePath.replaceAll("\\.mp4", ".gif");
             convert2Gif(videoFile.getAbsolutePath(), gifFile, progress -> {
                 if (progress.isEnd()) {
                     final java.io.File file = new java.io.File(gifFile);
                     final Storage upload = fishApi.upload(file);
                     final String picUrl = upload.getSuccessMap().get(file.getName());
                     if (picUrl != null) {
-                        sendMessage(String.format("![%s](%s)", gifFile, picUrl));
+                        sendMessage(String.format("![%s](%s)", file.getName(), picUrl));
                     }
                 }
             });
