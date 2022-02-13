@@ -65,7 +65,7 @@ public class FishApiConfig {
             reconnect(executor, service);
         }, (webSocket, throwable, response) -> {
             log.warn("websocket broken. onFailure", throwable);
-            webSocket.close(1, throwable.getMessage());
+            webSocket.close(4999, throwable.getMessage());
             reconnect(executor, service);
         }, (webSocket, message) -> messageToTelegramCaught(service, message));
     }

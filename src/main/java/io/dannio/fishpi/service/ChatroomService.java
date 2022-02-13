@@ -105,6 +105,8 @@ public class ChatroomService {
                     final String picUrl = upload.getSuccessMap().get(file.getName());
                     if (picUrl != null) {
                         sendMessage(String.format("![%s](%s)", file.getName(), picUrl));
+                    } else {
+                        log.warn("upload to fishpi failure, cannot get picture url, and upload result is [{}]", upload);
                     }
                 }
             });
