@@ -100,15 +100,19 @@ public class ChatroomService {
             convert2Gif(videoFile.getAbsolutePath(), gifFile, progress -> {
                 log.info("process status[{}], isEnd[{}]", progress.status, progress.isEnd());
                 if (progress.isEnd()) {
-                    log.info("upload fileName[{}]", gifFile);
-                    final java.io.File file = new java.io.File(gifFile);
-                    final Storage upload = fishApi.upload(file);
-                    log.info("upload file[{}], result[{}]", file.getAbsolutePath(), upload);
-                    final String picUrl = upload.getSuccessMap().get(file.getName());
-                    if (picUrl != null) {
-                        sendMessage(String.format("![%s](%s)", file.getName(), picUrl));
-                    } else {
-                        log.warn("upload to fishpi failure, cannot get picture url, and upload result is [{}]", upload);
+                    try {
+                        log.info("upload fileName[{}]", gifFile);
+                        final java.io.File file = new java.io.File(gifFile);
+                        final Storage upload = fishApi.upload(file);
+                        log.info("upload file[{}], result[{}]", file.getAbsolutePath(), upload);
+                        final String picUrl = upload.getSuccessMap().get(file.getName());
+                        if (picUrl != null) {
+                            sendMessage(String.format("![%s](%s)", file.getName(), picUrl));
+                        } else {
+                            log.warn("upload to fishpi failure, cannot get picture url, and upload result is [{}]", upload);
+                        }
+                    } catch (Exception e) {
+                        log.error("error occurred", e);
                     }
                 }
             });
