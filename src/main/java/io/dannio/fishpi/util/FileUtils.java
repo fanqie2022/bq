@@ -28,13 +28,13 @@ public class FileUtils {
 
 
     @SneakyThrows
-    public static void convert2Gif(String input, String output, ProgressListener listener) {
+    public static void convert2Gif(String input, String output) {
         mkdirIfNotExists(new File(output).getParentFile());
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(input)
                 .addOutput(output)
                 .done();
-        new Thread(new FFmpegExecutor().createJob(builder, listener)).start();
+        new FFmpegExecutor().createJob(builder).run();
     }
 
 
