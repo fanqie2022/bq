@@ -92,22 +92,22 @@ public class ChatroomService {
 
         if (message.hasAnimation()) {
             final Animation animation = message.getAnimation();
-            final File source = absSender.execute(GetFile.builder().fileId(animation.getFileId()).build());
-            final String filePath = source.getFilePath();
-            final String fileUrl = source.getFileUrl(((FishpiBot) absSender).getBotToken());
-            java.io.File videoFile = downloadFromTelegram(fileUrl, dataProperties.getTelegram() + java.io.File.separator + filePath);
-            final String gifFile = dataProperties.getFishpi() + java.io.File.separator + filePath.replaceAll("\\.mp4", ".gif");
-            convert2Gif(videoFile.getAbsolutePath(), gifFile);
-            log.info("upload fileName[{}]", gifFile);
-            final java.io.File file = new java.io.File(gifFile);
-            final Storage upload = fishApi.upload(file);
-            log.info("upload file[{}], result[{}]", file.getAbsolutePath(), upload);
-            final String picUrl = upload.getSuccessMap().get(file.getName());
-            if (picUrl != null) {
-                sendMessage(String.format("![%s](%s)", file.getName(), picUrl));
-            } else {
-                log.warn("upload to fishpi failure, cannot get picture url, and upload result is [{}]", upload);
-            }
+//            final File source = absSender.execute(GetFile.builder().fileId(animation.getFileId()).build());
+//            final String filePath = source.getFilePath();
+//            final String fileUrl = source.getFileUrl(((FishpiBot) absSender).getBotToken());
+//            java.io.File videoFile = downloadFromTelegram(fileUrl, dataProperties.getTelegram() + java.io.File.separator + filePath);
+//            final String gifFile = dataProperties.getFishpi() + java.io.File.separator + filePath.replaceAll("\\.mp4", ".gif");
+//            convert2Gif(videoFile.getAbsolutePath(), gifFile);
+//            log.info("upload fileName[{}]", gifFile);
+//            final java.io.File file = new java.io.File(gifFile);
+//            final Storage upload = fishApi.upload(file);
+//            log.info("upload file[{}], result[{}]", file.getAbsolutePath(), upload);
+//            final String picUrl = upload.getSuccessMap().get(file.getName());
+//            if (picUrl != null) {
+//                sendMessage(String.format("![%s](%s)", file.getName(), picUrl));
+//            } else {
+//                log.warn("upload to fishpi failure, cannot get picture url, and upload result is [{}]", upload);
+//            }
 
         }
     }
