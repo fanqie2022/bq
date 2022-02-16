@@ -1,9 +1,6 @@
 package io.dannio.fishpi.entity;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
@@ -15,6 +12,7 @@ import java.math.BigInteger;
 @Table(indexes = {@Index(columnList = "fileId")})
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public @Data class TelegramFile extends AbstractPersistable<BigInteger> {
 
