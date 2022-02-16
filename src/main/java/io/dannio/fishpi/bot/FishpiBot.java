@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
+import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 
@@ -56,6 +57,10 @@ public class FishpiBot extends SpringWebhookBot {
         return null;
     }
 
+
+    public String getFileUrl(String filePath) {
+        return File.getFileUrl(this.getBotPath(), filePath);
+    }
 
     @Override
     public String getBotPath() {

@@ -15,7 +15,7 @@ import java.util.Objects;
 public class FileUtils {
 
     @SneakyThrows
-    public static File downloadFromTelegram(String fileUrl, String fileName) {
+    public static void downloadFromTelegram(String fileUrl, String fileName) {
         Request request = new Request.Builder().url(fileUrl).build();
         OkHttpClient okHttpClient = new OkHttpClient();
         final File download = new File(fileName);
@@ -23,12 +23,11 @@ public class FileUtils {
         final BufferedSink buffer = Okio.buffer(Okio.sink(download));
         buffer.writeAll(Objects.requireNonNull(okHttpClient.newCall(request).execute().body()).source());
         buffer.close();
-        return download;
     }
 
 
     @SneakyThrows
-    public static void convert2Gif(String input, String output) {
+    public static void convertByFfmpeg(String input, String output) {
         mkdirIfNotExists(new File(output).getParentFile());
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(input)

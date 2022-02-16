@@ -1,7 +1,11 @@
 package io.dannio.fishpi.service;
 
 import io.dannio.fishpi.bot.FishpiBot;
+import io.dannio.fishpi.entity.TelegramFile;
+import io.dannio.fishpi.entity.TelegramUser;
 import io.dannio.fishpi.properties.DataProperties;
+import io.dannio.fishpi.repository.FileRepository;
+import io.dannio.fishpi.repository.UserRepository;
 import io.github.danniod.fish4j.api.FishApi;
 import io.github.danniod.fish4j.entites.ChatroomMessage;
 import io.github.danniod.fish4j.entites.Storage;
@@ -16,12 +20,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.games.Animation;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import static io.dannio.fishpi.util.FileUtils.convert2Gif;
+import java.io.File;
+
+import static io.dannio.fishpi.util.FileUtils.convertByFfmpeg;
 import static io.dannio.fishpi.util.FileUtils.downloadFromTelegram;
 
 @Slf4j
@@ -39,6 +44,9 @@ public class ChatroomService {
 
     private final DataProperties dataProperties;
 
+    private final UserRepository userRepository;
+
+    private final FileRepository fileRepository;
 
     @SneakyThrows
     public void messageToTelegram(ChatroomMessage message) {
@@ -87,39 +95,73 @@ public class ChatroomService {
     public void messageToFishPi(Message message) {
 
         if (message.hasText()) {
-            sendMessage(message.getText());
+            sendMessage(message.getFrom(), message.getText());
         }
 
         if (message.hasAnimation()) {
-            final Animation animation = message.getAnimation();
-//            final File source = absSender.execute(GetFile.builder().fileId(animation.getFileId()).build());
-//            final String filePath = source.getFilePath();
-//            final String fileUrl = source.getFileUrl(((FishpiBot) absSender).getBotToken());
-//            java.io.File videoFile = downloadFromTelegram(fileUrl, dataProperties.getTelegram() + java.io.File.separator + filePath);
-//            final String gifFile = dataProperties.getFishpi() + java.io.File.separator + filePath.replaceAll("\\.mp4", ".gif");
-//            convert2Gif(videoFile.getAbsolutePath(), gifFile);
-//            log.info("upload fileName[{}]", gifFile);
-//            final java.io.File file = new java.io.File(gifFile);
-//            final Storage upload = fishApi.upload(file);
-//            log.info("upload file[{}], result[{}]", file.getAbsolutePath(), upload);
-//            final String picUrl = upload.getSuccessMap().get(file.getName());
-//            if (picUrl != null) {
-//                sendMessage(String.format("![%s](%s)", file.getName(), picUrl));
-//            } else {
-//                log.warn("upload to fishpi failure, cannot get picture url, and upload result is [{}]", upload);
-//            }
+            final String fileId = message.getAnimation().getFileId();
+
+            String url = getUrl(fileId);
+            sendMessage(message.getFrom(), String.format("![%s](%s)", fileId, url));
 
         }
     }
 
 
-    private void sendMessage(String content) {
-        log.info("telegram -> fishpi message[{}]", content);
+    @SneakyThrows
+    private String getUrl(String fileId) {
+
+        final TelegramFile byFileId = fileRepository.getByFileId(fileId);
+
+        if (byFileId != null) {
+            return byFileId.getFishUrl();
+        }
+
+        final String filePath = absSender.execute(GetFile.builder().fileId(fileId).build()).getFilePath();
+        String path = dataProperties.getTelegram() + File.separator + filePath;
+        final String fileUrl = ((FishpiBot) absSender).getFileUrl(filePath);
+        downloadFromTelegram(fileUrl, path);
+        if (filePath.endsWith(".mp4")) {
+            final String gifFile = dataProperties.getFishpi() + File.separator + filePath.replaceAll("\\.mp4", ".gif");
+            convertByFfmpeg(path, gifFile);
+            path = gifFile;
+        }
+        final File file = new File(path);
+        final long start = System.currentTimeMillis();
+        final Storage upload = fishApi.upload(file);
+        final String fishUrl = upload.getSuccessMap().get(file.getName());
+        log.info("upload cost[{}]ms result[{}]", System.currentTimeMillis() - start, upload);
+        if (fishUrl == null) {
+            log.warn("upload to fishpi failure, cannot get picture url");
+        } else {
+            fileRepository.save(TelegramFile.builder()
+                    .fileId(fileId)
+                    .filePath(filePath)
+                    .fishUrl(fishUrl)
+                    .build());
+        }
+        return fishUrl;
+    }
+
+
+    @SneakyThrows
+    private void sendMessage(User user, String content) {
+        final TelegramUser byTelegramId = userRepository.getByTelegramId(user.getId());
+
+        if (byTelegramId == null) {
+            log.warn("user[{}] not link account to fishpi", user.getUserName());
+            return;
+        }
+
+        log.info("telegram -> fishpi user[{}], message[{}]", byTelegramId.getFishId(), content);
 
         fishApi.sendMessage(MessageParam.builder()
-                .apiKey("lRIEfO4Iqvn9fAhMxEHr9o6Ee15Aw3RQ")
+                .apiKey(byTelegramId.getApiKey())
                 .content(content)
                 .build());
     }
+
+
+
 
 }

@@ -37,11 +37,15 @@ public class LinkCommand extends BotCommand {
         if (arguments.length == 0) {
             reply = "send '/link apiKey' to bing your fishpi account";
         } else {
-            final FishPiUser fishPiUser = service.linkFishAccount(arguments[0]);
-            // 🍺 cheers!
-            reply = "\uD83C\uDF7A cheers!\nHello "
-                    + (fishPiUser.getUserNickname() != null ? fishPiUser.getUserNickname() : fishPiUser.getUserName())
-                    + ". Welcome to join [Chatroom](https://t.me/fishpi_cr).\n and you can send me /help to get manual";
+            final FishPiUser fishPiUser = service.linkFishAccount(user, arguments[0]);
+            if (fishPiUser == null) {
+                reply = "apiKey was Incorrect or Expired";
+            } else {
+                // 🍺 cheers!
+                reply = "\uD83C\uDF7A cheers!\nHello "
+                        + (fishPiUser.getUserNickname() != null ? fishPiUser.getUserNickname() : fishPiUser.getUserName())
+                        + ". Welcome to join [Chatroom](https://t.me/fishpi_cr).\n and you can send me /help to get manual";
+            }
         }
 
         absSender.execute(SendMessage.builder()
