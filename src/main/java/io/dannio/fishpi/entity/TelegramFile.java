@@ -6,7 +6,6 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
-import java.math.BigInteger;
 
 @Entity
 @Table(indexes = {@Index(columnList = "fileId")})
@@ -14,9 +13,9 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public @Data class TelegramFile extends AbstractPersistable<BigInteger> {
+public @Data class TelegramFile extends AbstractPersistable<Long> {
 
-    private BigInteger id;
+    private Long id;
 
     private String fileId;
 
