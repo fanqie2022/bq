@@ -9,4 +9,7 @@ import java.math.BigInteger;
 public interface FileRepository extends JpaRepository<TelegramFile, BigInteger> {
 
     TelegramFile getByFileId(String fileId);
+
+    TelegramFile getByFilePath(String filePath);
+
 }
