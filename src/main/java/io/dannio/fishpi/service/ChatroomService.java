@@ -126,10 +126,11 @@ public class ChatroomService {
         final String filePath = absSender.execute(GetFile.builder().fileId(fileId).build()).getFilePath();
         String path = dataProperties.getTelegram() + File.separator + filePath;
         final String fileUrl = ((FishpiBot) absSender).getFileUrl(filePath);
-        final File localFilePath = downloadFromTelegram(fileUrl, path);
+        final File localFile = downloadFromTelegram(fileUrl, path);
+        log.info("url[{}] download to local path[{}], size[{}]", fileUrl, localFile.getAbsolutePath(), localFile.getTotalSpace());
         if (filePath.endsWith(".mp4")) {
             final String gifFile = dataProperties.getFishpi() + File.separator + filePath.replaceAll("\\.mp4", ".gif");
-            convertByFfmpeg(localFilePath.getAbsolutePath(), gifFile);
+            convertByFfmpeg(localFile.getAbsolutePath(), gifFile);
             path = gifFile;
         }
         final File file = new File(path);
