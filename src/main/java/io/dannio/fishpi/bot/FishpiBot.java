@@ -59,7 +59,7 @@ public class FishpiBot extends SpringWebhookBot {
 
 
     public String getFileUrl(String filePath) {
-        return File.getFileUrl(this.getBotPath(), filePath);
+        return File.getFileUrl(this.getBotToken(), filePath);
     }
 
     @Override
