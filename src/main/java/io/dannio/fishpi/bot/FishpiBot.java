@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -52,8 +53,16 @@ public class FishpiBot extends SpringWebhookBot {
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         log.info("Webhook received update[{}]", toJson(update));
 
-        service.receive(this, update);
-
+        try {
+            service.receive(this, update);
+        } catch (Exception e) {
+            log.warn("An error occurred when receive a update", e);
+            return SendMessage.builder()
+                    .chatId(update.getMessage().getChat().getId().toString())
+                    // 😵
+                    .text("\uD83D\uDE35 出错了: " + e.getMessage())
+                    .build();
+        }
         return null;
     }
 
