@@ -98,19 +98,24 @@ public class ChatroomService {
             sendMessage(message.getFrom(), message.getText());
         }
 
-        if (message.hasAnimation()) {
-            final String fileId = message.getAnimation().getFileId();
-
-            String url = getUrl(fileId);
-            sendMessage(message.getFrom(), String.format("![%s](%s)", fileId, url));
+        if (message.hasAnimation() || message.hasSticker() || message.hasPhoto() || message.hasDocument()) {
+            String fileId = null;
+            if (message.hasAnimation()) {
+                fileId = message.getAnimation().getFileId();
+            } else if (message.hasSticker()) {
+                fileId = message.getSticker().getFileId();
+            } else if (message.hasPhoto()) {
+                fileId = message.getPhoto().get(message.getPhoto().size() - 1).getFileId();
+            } else if (message.hasDocument()){
+                fileId = message.getDocument().getFileId();
+            }
+            if (fileId == null) {
+                log.warn("no fileId found in message[{}]", message);
+                return;
+            }
+            sendMessage(message.getFrom(), String.format("![%s](%s)", fileId, getUrl(fileId)));
         }
 
-        if (message.hasSticker()) {
-
-            final String fileId = message.getSticker().getFileId();
-            String url = getUrl(fileId);
-            sendMessage(message.getFrom(), String.format("![%s](%s)", fileId, url));
-        }
     }
 
 

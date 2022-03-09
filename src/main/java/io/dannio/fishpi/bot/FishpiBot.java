@@ -2,7 +2,7 @@ package io.dannio.fishpi.bot;
 
 import io.dannio.fishpi.properties.BotProperties;
 import io.dannio.fishpi.service.ChatroomService;
-import io.dannio.fishpi.service.FishpiService;
+import io.dannio.fishpi.service.BotService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,14 +21,14 @@ import static io.dannio.fishpi.util.JsonUtils.toJson;
 @Component
 public class FishpiBot extends SpringWebhookBot {
 
-    private final FishpiService service;
+    private final BotService service;
 
     private final ChatroomService chatroomService;
 
     private final BotProperties properties;
 
 
-    public FishpiBot(SetWebhook setWebhook, FishpiService service, ChatroomService chatroomService, BotProperties properties) {
+    public FishpiBot(SetWebhook setWebhook, BotService service, ChatroomService chatroomService, BotProperties properties) {
         super(setWebhook);
         this.service = service;
         this.properties = properties;

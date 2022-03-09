@@ -15,7 +15,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class FishpiService {
+public class BotService {
 
     private final BotCommandRegistry registry;
 
@@ -36,7 +36,7 @@ public class FishpiService {
         } else if (message.isCommand()) {
             if (!registry.executeCommand(bot, message)) {
                 //we have received a not registered command, handle it as invalid
-                answerMessage(bot, message.getChatId(), "Unknow command. Say what?");
+                answerMessage(bot, message.getChatId(), "Unknown command. Say what?");
             }
         } else {
             answerMessage(bot, message.getChatId(), "hello");
