@@ -35,8 +35,23 @@ public class CommandService {
 
 
     @SneakyThrows
-    public boolean pingFishpi(User user) {
-        final TelegramUser telegramUser = repository.getByTelegramId(user.getId());
-        return telegramUser != null && fishApi.getUser(telegramUser.getApiKey()) != null;
+    public boolean pingFishpi(User telegramUser) {
+        final TelegramUser user = repository.getByTelegramId(telegramUser.getId());
+        return user != null && fishApi.getUser(user.getApiKey()) != null;
+    }
+
+
+    @SneakyThrows
+    public Double getLiveness(User telegramUser) {
+        final TelegramUser user = repository.getByTelegramId(telegramUser.getId());
+        return fishApi.getLiveness(user.getApiKey());
+    }
+
+    @SneakyThrows
+    public Integer collectReward(User telegramUser) {
+        final TelegramUser user = repository.getByTelegramId(telegramUser.getId());
+        return fishApi.isCollectedLivenessReward(user.getApiKey())
+                ? -1
+                : fishApi.collectLivenessReward(user.getApiKey());
     }
 }
