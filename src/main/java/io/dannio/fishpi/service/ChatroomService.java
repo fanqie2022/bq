@@ -117,7 +117,7 @@ public class ChatroomService {
                                 .callbackData("{\"id\":" + status.getId() + "}")
                                 .build()))
                         .build();
-                EditMessageText.builder().messageId(redPacket.getMessageId()).replyMarkup(editKeyboardMarkup);
+                absSender.execute(EditMessageText.builder().messageId(redPacket.getMessageId()).replyMarkup(editKeyboardMarkup).build());
                 break;
             case REVOKE:
                 final RevokeMessage revokeMessage = (RevokeMessage) message;
