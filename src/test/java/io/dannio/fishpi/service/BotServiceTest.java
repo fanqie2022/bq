@@ -22,10 +22,19 @@ class BotServiceTest {
     @Autowired
     private FishpiBot bot;
 
+
     @SneakyThrows
     @Test
     public void testReplyMarkup() {
         final Update update = new ObjectMapper().readValue(fromResource("telegram/replyMarkup.json"), Update.class);
+        service.receive(bot, update);
+    }
+
+
+    @SneakyThrows
+    @Test
+    public void testOpenRedPacket() {
+        final Update update = new ObjectMapper().readValue(fromResource("telegram/openRedPacket.json"), Update.class);
         service.receive(bot, update);
     }
 }

@@ -1,5 +1,7 @@
 package io.dannio.fishpi.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dannio.fishpi.bot.FishpiBot;
 import io.dannio.fishpi.entity.FishpiRedPacket;
 import io.dannio.fishpi.entity.TelegramFile;
@@ -14,16 +16,20 @@ import io.github.danniod.fish4j.entites.Storage;
 import io.github.danniod.fish4j.entites.chatroom.*;
 import io.github.danniod.fish4j.enums.ChatroomMessageType;
 import io.github.danniod.fish4j.param.MessageParam;
+import io.github.danniod.fish4j.param.RedPacketOpenParam;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -31,6 +37,8 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.dannio.fishpi.util.FileUtils.convertByFfmpeg;
 import static io.dannio.fishpi.util.FileUtils.downloadFromTelegram;
@@ -225,6 +233,20 @@ public class ChatroomService {
     }
 
 
-
-
+    @SneakyThrows
+    public void openRedPacket(CallbackQuery callbackQuery) {
+        final Map<String, Long> map = new ObjectMapper().readValue(callbackQuery.getData(), new TypeReference<HashMap<String, Long>>() {
+        });
+        final TelegramUser user = userRepository.getByTelegramId(callbackQuery.getFrom().getId());
+        final Object result = fishApi.openRedPocket(RedPacketOpenParam.builder()
+                .apiKey(user.getApiKey())
+                .oId(map.get("id"))
+                .build());
+        log.info("open redPacket result[{}]", result);
+        absSender.execute(AnswerCallbackQuery.builder()
+                .callbackQueryId(callbackQuery.getId())
+                .text("complete")
+                .showAlert(true)
+                .build());
+    }
 }

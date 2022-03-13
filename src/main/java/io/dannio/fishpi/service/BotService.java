@@ -29,6 +29,10 @@ public class BotService {
         if (!update.hasMessage()) {
             return;
         }
+        if (update.hasCallbackQuery()) {
+            chatroom.openRedPacket(update.getCallbackQuery());
+            return;
+        }
 
         Message message = update.getMessage();
         if (message.isSuperGroupMessage()) {
