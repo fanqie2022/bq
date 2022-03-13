@@ -21,4 +21,6 @@ public @Data class FishpiRedPacket extends AbstractPersistable<Long> {
 
     private Integer size;
 
+    private String messageContent;
+
 }

@@ -106,6 +106,7 @@ public class ChatroomService {
                         .redPacketId(redPacketMessage.getId())
                         .messageId(messageId)
                         .size(redPacketMessage.getRedPacket().getCount())
+                        .messageContent(redPacketContent)
                         .build());
                 break;
             case RED_PACKET_STATUS:
@@ -117,7 +118,12 @@ public class ChatroomService {
                                 .callbackData("{\"id\":" + status.getId() + "}")
                                 .build()))
                         .build();
-                absSender.execute(EditMessageText.builder().messageId(redPacket.getMessageId()).replyMarkup(editKeyboardMarkup).build());
+                absSender.execute(EditMessageText.builder()
+                        .chatId(chatroomGroupId)
+                        .messageId(redPacket.getMessageId())
+                        .text(redPacket.getMessageContent())
+                        .replyMarkup(editKeyboardMarkup)
+                        .build());
                 break;
             case REVOKE:
                 final RevokeMessage revokeMessage = (RevokeMessage) message;
