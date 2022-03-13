@@ -25,8 +25,8 @@ repositories {
 
 dependencies {
 
-    implementation 'io.github.danniod.fish4j:fish4j-api:0.0.8-SNAPSHOT'
-    implementation 'io.github.danniod.fish4j:fish4j-impl:0.0.8-SNAPSHOT'
+    implementation 'io.github.danniod.fish4j:fish4j-api:0.0.10-SNAPSHOT'
+    implementation 'io.github.danniod.fish4j:fish4j-impl:0.0.10-SNAPSHOT'
 
     implementation 'net.bramp.ffmpeg:ffmpeg:0.6.2'
 

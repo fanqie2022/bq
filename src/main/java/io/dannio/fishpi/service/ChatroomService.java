@@ -1,10 +1,12 @@
 package io.dannio.fishpi.service;
 
 import io.dannio.fishpi.bot.FishpiBot;
+import io.dannio.fishpi.entity.FishpiRedPacket;
 import io.dannio.fishpi.entity.TelegramFile;
 import io.dannio.fishpi.entity.TelegramUser;
 import io.dannio.fishpi.properties.DataProperties;
 import io.dannio.fishpi.repository.FileRepository;
+import io.dannio.fishpi.repository.RedPacketRepository;
 import io.dannio.fishpi.repository.UserRepository;
 import io.github.danniod.fish4j.api.FishApi;
 import io.github.danniod.fish4j.entites.ChatroomMessage;
@@ -20,11 +22,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.io.File;
+import java.util.Collections;
 
 import static io.dannio.fishpi.util.FileUtils.convertByFfmpeg;
 import static io.dannio.fishpi.util.FileUtils.downloadFromTelegram;
@@ -47,6 +53,8 @@ public class ChatroomService {
     private final UserRepository userRepository;
 
     private final FileRepository fileRepository;
+
+    private final RedPacketRepository redPacketRepository;
 
     @SneakyThrows
     public void messageToTelegram(ChatroomMessage message) {
@@ -75,10 +83,41 @@ public class ChatroomService {
             case RED_PACKET:
                 final RedPacketMessage redPacketMessage = (RedPacketMessage) message;
 
+                final String sender = StringUtils.isNotBlank(redPacketMessage.getUserNickname())
+                        ? String.format("%s(%s)", redPacketMessage.getUserNickname(), redPacketMessage.getUserName())
+                        : redPacketMessage.getUserName();
+                final String redPacketContent = String.format("%s:\n\uD83E\uDDE7[%s]%s", sender, redPacketMessage.getRedPacket().getType(), redPacketMessage.getRedPacket().getMsg());
+                log.info("-> telegram msg[{}]", redPacketContent);
+
+
+                final InlineKeyboardMarkup keyboardMarkup = InlineKeyboardMarkup.builder()
+                        .keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+                                .text("Open")
+                                .callbackData("{\"id\":" + redPacketMessage.getId() + "}")
+                                .build()))
+                        .build();
+
+                final Integer messageId = absSender.execute(SendMessage.builder()
+                        .chatId(chatroomGroupId)
+                        .text(redPacketContent)
+                        .replyMarkup(keyboardMarkup)
+                        .build()).getMessageId();
+                redPacketRepository.save(FishpiRedPacket.builder()
+                        .redPacketId(redPacketMessage.getId())
+                        .messageId(messageId)
+                        .size(redPacketMessage.getRedPacket().getCount())
+                        .build());
                 break;
             case RED_PACKET_STATUS:
-                final RedPacketStatusMessage redPacketStatusMessage = (RedPacketStatusMessage) message;
-
+                final RedPacketStatusMessage status = (RedPacketStatusMessage) message;
+                final FishpiRedPacket redPacket = redPacketRepository.getByRedPacketId(status.getId());
+                final InlineKeyboardMarkup editKeyboardMarkup = InlineKeyboardMarkup.builder()
+                        .keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+                                .text(String.format("Open(%d/%d)", status.getGot(), status.getCount()))
+                                .callbackData("{\"id\":" + status.getId() + "}")
+                                .build()))
+                        .build();
+                EditMessageText.builder().messageId(redPacket.getMessageId()).replyMarkup(editKeyboardMarkup);
                 break;
             case REVOKE:
                 final RevokeMessage revokeMessage = (RevokeMessage) message;

@@ -6,6 +6,7 @@ import io.dannio.fishpi.properties.WebhookProperties;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.CommandRegistry;
@@ -49,6 +50,7 @@ public class BotConfig {
     private final CustomWebhook customWebhook;
 
     @Bean
+    @ConditionalOnMissingBean
     @SneakyThrows
     public TelegramBotsApi telegramBotsApi() {
         return new TelegramBotsApi(DefaultBotSession.class, customWebhook);

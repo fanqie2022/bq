@@ -8,17 +8,17 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 
 @Entity
-@Table(indexes = {@Index(columnList = "telegramId")})
+@Table(indexes = {@Index(columnList = "messageId")})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public @Data class TelegramUser extends AbstractPersistable<Long> {
+public @Data class FishpiRedPacket extends AbstractPersistable<Long> {
 
-    private Long telegramId;
+    private Long redPacketId;
 
-    private String fishId;
+    private Integer messageId;
 
-    private String apiKey;
+    private Integer size;
 
 }

@@ -15,8 +15,6 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 public @Data class TelegramFile extends AbstractPersistable<Long> {
 
-    private Long id;
-
     private String fileId;
 
     private String filePath;
