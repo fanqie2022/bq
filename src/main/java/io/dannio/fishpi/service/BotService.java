@@ -26,26 +26,21 @@ public class BotService {
     @SneakyThrows
     public void receive(FishpiBot bot, Update update) {
 
-        if (!update.hasMessage()) {
-            return;
-        }
         if (update.hasCallbackQuery()) {
             chatroom.openRedPacket(update.getCallbackQuery());
-            return;
-        }
-
-        Message message = update.getMessage();
-        if (message.isSuperGroupMessage()) {
-            chatroom.messageToFishPi(message);
-        } else if (message.isCommand()) {
-            if (!registry.executeCommand(bot, message)) {
-                //we have received a not registered command, handle it as invalid
-                answerMessage(bot, message.getChatId(), "Unknown command. Say what?");
+        } else if (update.hasMessage()) {
+            Message message = update.getMessage();
+            if (message.isSuperGroupMessage()) {
+                chatroom.messageToFishPi(message);
+            } else if (message.isCommand()) {
+                if (!registry.executeCommand(bot, message)) {
+                    //we have received a not registered command, handle it as invalid
+                    answerMessage(bot, message.getChatId(), "Unknown command. Say what?");
+                }
+            } else {
+                answerMessage(bot, message.getChatId(), "hello");
             }
-        } else {
-            answerMessage(bot, message.getChatId(), "hello");
         }
-
     }
 
 
