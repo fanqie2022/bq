@@ -12,6 +12,7 @@ import io.dannio.fishpi.repository.RedPacketRepository;
 import io.dannio.fishpi.repository.UserRepository;
 import io.github.danniod.fish4j.api.FishApi;
 import io.github.danniod.fish4j.entites.ChatroomMessage;
+import io.github.danniod.fish4j.entites.FishPiUser;
 import io.github.danniod.fish4j.entites.Storage;
 import io.github.danniod.fish4j.entites.chatroom.*;
 import io.github.danniod.fish4j.enums.ChatroomMessageType;
@@ -29,7 +30,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -39,6 +39,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static io.dannio.fishpi.util.FileUtils.convertByFfmpeg;
 import static io.dannio.fishpi.util.FileUtils.downloadFromTelegram;
@@ -238,15 +239,27 @@ public class ChatroomService {
         final Map<String, Long> map = new ObjectMapper().readValue(callbackQuery.getData(), new TypeReference<HashMap<String, Long>>() {
         });
         final TelegramUser user = userRepository.getByTelegramId(callbackQuery.getFrom().getId());
-        final Object result = fishApi.openRedPocket(RedPacketOpenParam.builder()
+        final OpenedRedPocket result = fishApi.openRedPocket(RedPacketOpenParam.builder()
                 .apiKey(user.getApiKey())
                 .oId(map.get("id"))
                 .build());
         log.info("open redPacket result[{}]", result);
+        final OpenedRedPocket.User openedUser = result.getWho().stream()
+                .filter(who -> user.getFishId().equals(who.getUserId()))
+                .collect(Collectors.toList()).get(0);
+        String answer;
+        if (openedUser == null) {
+            answer = "你来晚了，下次早点！";
+        } else if (openedUser.getUserMoney() > 0) {
+            answer = String.format("抢到了 %d 积分！", openedUser.getUserMoney());
+        } else if (openedUser.getUserMoney() == 0) {
+            answer = "抢了个寂寞。";
+        } else {
+            answer = String.format("被打劫了 %d 积分!", -openedUser.getUserMoney());
+        }
         absSender.execute(AnswerCallbackQuery.builder()
                 .callbackQueryId(callbackQuery.getId())
-                .text("complete")
-                .showAlert(true)
+                .text(answer)
                 .build());
     }
 }
