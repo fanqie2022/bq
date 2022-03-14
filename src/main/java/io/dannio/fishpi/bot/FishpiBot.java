@@ -51,7 +51,7 @@ public class FishpiBot extends SpringWebhookBot {
     @Override
     @SneakyThrows
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        log.info("Webhook received update[{}]", toJson(update));
+        log.trace("Webhook received update[{}]", toJson(update));
 
         try {
             service.receive(this, update);

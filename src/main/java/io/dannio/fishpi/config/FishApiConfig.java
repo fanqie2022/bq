@@ -20,6 +20,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static io.dannio.fishpi.util.JsonUtils.toJson;
+
 @Slf4j
 @Configuration
 public class FishApiConfig {
@@ -59,7 +61,7 @@ public class FishApiConfig {
 
         return new WebSocketClient((webSocket, response) -> executor.scheduleAtFixedRate(() -> {
             webSocket.send("-hb-");
-            log.info("Chatroom websocket heartbeat");
+            log.debug("Chatroom websocket heartbeat");
         }, 0, 3, TimeUnit.MINUTES), (webSocket, i, s) -> {
             webSocket.close(i, s);
             reconnect(executor, service);
@@ -72,6 +74,7 @@ public class FishApiConfig {
 
     private void messageToTelegramCaught(ChatroomService service, ChatroomMessage message) {
         try {
+            log.trace("receive fishpi chatroom message[{}]", toJson(message));
             service.messageToTelegram(message);
         } catch (Exception e) {
             log.warn("drop bad message", e);
@@ -85,7 +88,9 @@ public class FishApiConfig {
         if (reconnectTimes >= RECONNECT_DELAYS.length) {
             return;
         }
-        Thread.sleep(RECONNECT_DELAYS[reconnectTimes++]);
+        int currentTimes = reconnectTimes++;
+        Thread.sleep(RECONNECT_DELAYS[currentTimes]);
+        log.info("chatroom socket reconnect... try[{}]", currentTimes);
         webSocketClient(service);
     }
 
