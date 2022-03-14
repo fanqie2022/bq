@@ -38,6 +38,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -244,18 +245,18 @@ public class ChatroomService {
                 .oId(map.get("id"))
                 .build());
         log.info("open redPacket result[{}]", result);
-        final OpenedRedPocket.User openedUser = result.getWho().stream()
+        final List<OpenedRedPocket.User> openedUser = result.getWho().stream()
                 .filter(who -> user.getFishId().equals(who.getUserId()))
-                .collect(Collectors.toList()).get(0);
+                .collect(Collectors.toList());
         String answer;
-        if (openedUser == null) {
+        if (openedUser.isEmpty()) {
             answer = "你来晚了，下次早点！";
-        } else if (openedUser.getUserMoney() > 0) {
-            answer = String.format("抢到了 %d 积分！", openedUser.getUserMoney());
-        } else if (openedUser.getUserMoney() == 0) {
+        } else if (openedUser.get(0).getUserMoney() > 0) {
+            answer = String.format("抢到了 %d 积分！", openedUser.get(0).getUserMoney());
+        } else if (openedUser.get(0).getUserMoney() == 0) {
             answer = "抢了个寂寞。";
         } else {
-            answer = String.format("被打劫了 %d 积分!", -openedUser.getUserMoney());
+            answer = String.format("被打劫了 %d 积分!", -openedUser.get(0).getUserMoney());
         }
         absSender.execute(AnswerCallbackQuery.builder()
                 .callbackQueryId(callbackQuery.getId())

@@ -57,11 +57,13 @@ public class FishpiBot extends SpringWebhookBot {
             service.receive(this, update);
         } catch (Exception e) {
             log.warn("An error occurred when receive a update", e);
-            return SendMessage.builder()
-                    .chatId(update.getMessage().getChat().getId().toString())
-                    // 😵
-                    .text("\uD83D\uDE35 出错了: " + e.getMessage())
-                    .build();
+            if (update.hasMessage()) {
+                return SendMessage.builder()
+                        .chatId(update.getMessage().getChat().getId().toString())
+                        // 😵
+                        .text("\uD83D\uDE35 出错了: " + e.getMessage())
+                        .build();
+            }
         }
         return null;
     }
