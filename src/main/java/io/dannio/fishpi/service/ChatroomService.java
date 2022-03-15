@@ -3,16 +3,17 @@ package io.dannio.fishpi.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dannio.fishpi.bot.FishpiBot;
+import io.dannio.fishpi.entity.SuperGroupMessage;
 import io.dannio.fishpi.entity.FishpiRedPacket;
 import io.dannio.fishpi.entity.TelegramFile;
 import io.dannio.fishpi.entity.TelegramUser;
 import io.dannio.fishpi.properties.DataProperties;
 import io.dannio.fishpi.repository.FileRepository;
+import io.dannio.fishpi.repository.MessageRepository;
 import io.dannio.fishpi.repository.RedPacketRepository;
 import io.dannio.fishpi.repository.UserRepository;
 import io.github.danniod.fish4j.api.FishApi;
 import io.github.danniod.fish4j.entites.ChatroomMessage;
-import io.github.danniod.fish4j.entites.FishPiUser;
 import io.github.danniod.fish4j.entites.Storage;
 import io.github.danniod.fish4j.entites.chatroom.*;
 import io.github.danniod.fish4j.enums.ChatroomMessageType;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -64,6 +66,8 @@ public class ChatroomService {
 
     private final FileRepository fileRepository;
 
+    private final MessageRepository messageRepository;
+
     private final RedPacketRepository redPacketRepository;
 
     @SneakyThrows
@@ -81,9 +85,13 @@ public class ChatroomService {
                 final String content = String.format("%s:\n%s", user, chatMessage.getMarkdownContent());
                 log.trace("-> telegram msg[{}]", content);
 
-                absSender.execute(SendMessage.builder()
+                final Message executed = absSender.execute(SendMessage.builder()
                         .chatId(chatroomGroupId)
                         .text(content)
+                        .build());
+                messageRepository.save(SuperGroupMessage.builder()
+                        .messageId(executed.getMessageId())
+                        .fishMsgId(chatMessage.getId())
                         .build());
                 break;
             case ONLINE:
@@ -137,7 +145,11 @@ public class ChatroomService {
                 break;
             case REVOKE:
                 final RevokeMessage revokeMessage = (RevokeMessage) message;
-
+                final SuperGroupMessage byFishMsgId = messageRepository.getByFishMsgId(revokeMessage.getId());
+                absSender.execute(DeleteMessage.builder()
+                        .chatId(chatroomGroupId)
+                        .messageId(byFishMsgId.getMessageId())
+                        .build());
                 break;
             default:
                 log.warn("UNKNOWN message type!");
@@ -169,7 +181,7 @@ public class ChatroomService {
                 log.warn("no fileId found in message[{}]", message);
                 return;
             }
-            sendMessage(message.getFrom(), String.format("![%s](%s)", fileId, getUrl(fileId)));
+            sendMessage(message.getFrom(), String.format("![图片表情](%s)", getUrl(fileId)));
         }
 
         log.trace("messageToFishPi function passed");
