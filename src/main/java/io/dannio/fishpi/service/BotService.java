@@ -2,7 +2,6 @@ package io.dannio.fishpi.service;
 
 import io.dannio.fishpi.bot.FishpiBot;
 import io.dannio.fishpi.commands.registry.BotCommandRegistry;
-import io.github.danniod.fish4j.api.FishApi;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +19,6 @@ public class BotService {
     private final BotCommandRegistry registry;
 
     private final ChatroomService chatroom;
-
-    private final FishApi fishApi;
 
     @SneakyThrows
     public void receive(FishpiBot bot, Update update) {

@@ -74,7 +74,7 @@ public class FishApiConfig {
 
     private void messageToTelegramCaught(ChatroomService service, ChatroomMessage message) {
         try {
-            log.trace("receive fishpi chatroom message[{}]", toJson(message));
+            log.debug("receive fishpi chatroom message[{}]", toJson(message));
             service.messageToTelegram(message);
         } catch (Exception e) {
             log.warn("drop bad message", e);
@@ -90,7 +90,7 @@ public class FishApiConfig {
         }
         int currentTimes = reconnectTimes++;
         Thread.sleep(RECONNECT_DELAYS[currentTimes]);
-        log.info("chatroom socket reconnect... try[{}]", currentTimes);
+        log.debug("chatroom socket reconnect... try[{}]", currentTimes);
         webSocketClient(service);
     }
 

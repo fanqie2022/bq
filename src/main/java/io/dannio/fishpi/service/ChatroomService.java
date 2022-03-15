@@ -79,7 +79,7 @@ public class ChatroomService {
                         : chatMessage.getUserName();
 
                 final String content = String.format("%s:\n%s", user, chatMessage.getMarkdownContent());
-                log.info("-> telegram msg[{}]", content);
+                log.trace("-> telegram msg[{}]", content);
 
                 absSender.execute(SendMessage.builder()
                         .chatId(chatroomGroupId)
@@ -97,7 +97,7 @@ public class ChatroomService {
                         ? String.format("%s(%s)", redPacketMessage.getUserNickname(), redPacketMessage.getUserName())
                         : redPacketMessage.getUserName();
                 final String redPacketContent = String.format("%s:\n\uD83E\uDDE7[%s]%s", sender, redPacketMessage.getRedPacket().getType(), redPacketMessage.getRedPacket().getMsg());
-                log.info("-> telegram msg[{}]", redPacketContent);
+                log.trace("-> telegram msg[{}]", redPacketContent);
 
 
                 final InlineKeyboardMarkup keyboardMarkup = InlineKeyboardMarkup.builder()
@@ -140,9 +140,10 @@ public class ChatroomService {
 
                 break;
             default:
-
+                log.warn("UNKNOWN message type!");
         }
 
+        log.trace("messageToTelegram function passed");
     }
 
 
@@ -170,6 +171,8 @@ public class ChatroomService {
             }
             sendMessage(message.getFrom(), String.format("![%s](%s)", fileId, getUrl(fileId)));
         }
+
+        log.trace("messageToFishPi function passed");
 
     }
 

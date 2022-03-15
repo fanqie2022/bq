@@ -21,3 +21,9 @@ spring:
     hikari:
       minimum-idle: 5
       maximum-pool-size: 30
+
+
+logging:
+  level: debug
+  pattern:
+    dateformat: yyyy-MM-dd HH:mm:ss.SSS,Asia/Shanghai
