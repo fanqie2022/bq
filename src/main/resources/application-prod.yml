@@ -24,6 +24,8 @@ spring:
 
 
 logging:
-  level: debug
+  level:
+    root: info
+    io.dannio.fishpi: trace
   pattern:
     dateformat: yyyy-MM-dd HH:mm:ss.SSS,Asia/Shanghai
