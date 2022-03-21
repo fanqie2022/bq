@@ -6,14 +6,16 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import static javax.ws.rs.core.Response.Status.NO_CONTENT;
+
 @Path("api")
 @Controller
 public class Api {
 
     @POST
-    @Path("/foo")
+    @Path("/generate_204")
     public Response foo() {
 
-        return Response.ok().entity("bar").build();
+        return Response.status(NO_CONTENT).build();
     }
 }
