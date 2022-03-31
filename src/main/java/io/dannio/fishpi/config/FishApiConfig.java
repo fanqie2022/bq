@@ -26,9 +26,15 @@ import static io.dannio.fishpi.util.JsonUtils.toJson;
 @Configuration
 public class FishApiConfig {
 
-    private static final int[] RECONNECT_DELAYS = {10000, 60000, 180000};
-    private int reconnectTimes = 0;
+    private static final int[] RECONNECT_DELAYS = {10000, 30000, 60000};
+    private static int reconnectTimes = 0;
+    private static WebSocketClient webSocketClient;
+    private static final ScheduledExecutorService EXECUTOR;
 
+    static {
+        EXECUTOR = new ScheduledThreadPoolExecutor(1,
+                new BasicThreadFactory.Builder().namingPattern("ws-heartbeat-%d").daemon(true).build());
+    }
     @Bean
     public FishApi fishApi(Retrofit retrofit) {
         return new FishApiImpl(retrofit);
@@ -48,7 +54,7 @@ public class FishApiConfig {
     @Bean
     public WebSocket webSocket(OkHttpClient client, WebSocketClient webSocketClient) {
         Request request = new Request.Builder()
-                .url("https://fishpi.cn/chat-room-channel?apiKey=FgKt3UMtyNiimukgWBqYyzJp4VrUPKVd")
+                .url("https://fishpi.cn/chat-room-channel")
                 .build();
         return client.newWebSocket(request, webSocketClient);
     }
@@ -56,20 +62,23 @@ public class FishApiConfig {
 
     @Bean
     public WebSocketClient webSocketClient(ChatroomService service) {
-        ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1,
-                new BasicThreadFactory.Builder().namingPattern("ws-heartbeat-%d").daemon(true).build());
 
-        return new WebSocketClient((webSocket, response) -> executor.scheduleAtFixedRate(() -> {
-            webSocket.send("-hb-");
-            log.debug("Chatroom websocket heartbeat");
-        }, 0, 3, TimeUnit.MINUTES), (webSocket, i, s) -> {
+        webSocketClient = new WebSocketClient((webSocket, response) -> {
+            EXECUTOR.scheduleAtFixedRate(() -> {
+                webSocket.send("-hb-");
+                log.debug("Chatroom websocket heartbeat");
+            }, 0, 3, TimeUnit.MINUTES);
+            reconnectTimes = 0;
+        }, (webSocket, i, s) -> {
+            EXECUTOR.shutdown();
             webSocket.close(i, s);
-            reconnect(executor, service);
         }, (webSocket, throwable, response) -> {
             log.warn("websocket broken. onFailure", throwable);
+            EXECUTOR.shutdown();
             webSocket.close(4999, throwable.getMessage());
-            reconnect(executor, service);
+            reconnect(service);
         }, (webSocket, message) -> messageToTelegramCaught(service, message));
+        return webSocketClient;
     }
 
     private void messageToTelegramCaught(ChatroomService service, ChatroomMessage message) {
@@ -83,8 +92,7 @@ public class FishApiConfig {
 
 
     @SneakyThrows
-    private void reconnect(ScheduledExecutorService executor, ChatroomService service) {
-        executor.shutdown();
+    private void reconnect(ChatroomService service) {
         if (reconnectTimes >= RECONNECT_DELAYS.length) {
             return;
         }
@@ -94,6 +102,10 @@ public class FishApiConfig {
         webSocketClient(service);
     }
 
+    public void reconnectChatroom(ChatroomService service) {
+        reconnectTimes = 0;
+        webSocketClient(service);
+    }
 
     @Bean
     public OkHttpClient customUaClient() {
