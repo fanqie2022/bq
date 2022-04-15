@@ -36,23 +36,11 @@ public class BotConfig {
         return SetWebhook.builder().url(webhookProperties.getUrl()).build();
     }
 
-    @Bean
-    public DefaultWebhook defaultWebhook() {
-
-        DefaultWebhook defaultWebhook = new DefaultWebhook();
-        // the port to start the server, on the localhost computer, on the server it be the server address
-        defaultWebhook.setInternalUrl("http://0.0.0.0:" + webhookProperties.getPort());
-
-        return defaultWebhook;
-    }
-
-
-    private final CustomWebhook customWebhook;
 
     @Bean
     @ConditionalOnMissingBean
     @SneakyThrows
-    public TelegramBotsApi telegramBotsApi() {
+    public TelegramBotsApi telegramBotsApi(CustomWebhook customWebhook) {
         return new TelegramBotsApi(DefaultBotSession.class, customWebhook);
     }
 }

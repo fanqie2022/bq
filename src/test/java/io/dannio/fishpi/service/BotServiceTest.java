@@ -37,4 +37,12 @@ class BotServiceTest {
         final Update update = new ObjectMapper().readValue(fromResource("telegram/openRedPacket.json"), Update.class);
         service.receive(bot, update);
     }
+
+
+    @SneakyThrows
+    @Test
+    public void testReply() {
+        final Update update = new ObjectMapper().readValue(fromResource("telegram/reply.json"), Update.class);
+        service.receive(bot, update);
+    }
 }

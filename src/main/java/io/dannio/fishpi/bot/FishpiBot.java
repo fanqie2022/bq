@@ -1,8 +1,8 @@
 package io.dannio.fishpi.bot;
 
 import io.dannio.fishpi.properties.BotProperties;
-import io.dannio.fishpi.service.ChatroomService;
 import io.dannio.fishpi.service.BotService;
+import io.dannio.fishpi.service.ChatroomService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
