@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static io.dannio.fishpi.util.FileUtils.convertByFfmpeg;
@@ -70,6 +71,9 @@ public class ChatroomService {
 
     private final RedPacketRepository redPacketRepository;
 
+
+    private static final Pattern PATTERN = Pattern.compile("<span class=\"(\\S*-)?extension-message\"/>");
+
     @SneakyThrows
     public void messageToTelegram(ChatroomMessage message) {
 
@@ -82,12 +86,18 @@ public class ChatroomService {
                         ? String.format("%s(%s)", chatMessage.getUserNickname(), chatMessage.getUserName())
                         : chatMessage.getUserName();
 
-                final String content = String.format("%s:\n%s", user, chatMessage.getMarkdownContent());
-                log.trace("-> telegram msg[{}]", content);
+                String content = chatMessage.getMarkdownContent();
+
+                final String[] split = content.split("\n");
+                if (PATTERN.matcher(split[split.length - 1]).matches()) {
+                    content = content.substring(0, content.lastIndexOf("\n" + split[split.length - 1]));
+                }
+                final String messageContent = String.format("%s:\n%s", user, content);
+                log.trace("-> telegram msg[{}]", messageContent);
 
                 final Message executed = absSender.execute(SendMessage.builder()
                         .chatId(chatroomGroupId)
-                        .text(content)
+                        .text(messageContent)
                         .build());
                 messageRepository.save(SuperGroupMessage.builder()
                         .messageId(executed.getMessageId())
