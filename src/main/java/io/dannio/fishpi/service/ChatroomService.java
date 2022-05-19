@@ -17,8 +17,10 @@ import io.github.danniod.fish4j.entites.ChatroomMessage;
 import io.github.danniod.fish4j.entites.Storage;
 import io.github.danniod.fish4j.entites.chatroom.*;
 import io.github.danniod.fish4j.enums.ChatroomMessageType;
+import io.github.danniod.fish4j.exception.FishApiException;
 import io.github.danniod.fish4j.param.MessageParam;
 import io.github.danniod.fish4j.param.RedPacketOpenParam;
+import io.github.danniod.fish4j.param.auth.UserApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -253,10 +255,27 @@ public class ChatroomService {
 
         log.info("telegram -> fishpi user[{}], message[{}]", byTelegramId.getFishId(), content);
 
-        fishApi.sendMessage(MessageParam.builder()
-                .apiKey(byTelegramId.getApiKey())
-                .content(content)
-                .build());
+        try {
+            fishApi.sendMessage(MessageParam.builder()
+                    .apiKey(byTelegramId.getApiKey())
+                    .content(content)
+                    .build());
+        } catch (FishApiException e) {
+            if ("Unauthorized".equals(e.getMessage()) && byTelegramId.getFishPassword() != null) {
+                final String apiKey = fishApi.getApiKey(UserApiParam.builder()
+                        .nameOrEmail(byTelegramId.getFishName())
+                        .userPassword(byTelegramId.getFishPassword()).build());
+                byTelegramId.setApiKey(apiKey);
+                userRepository.save(byTelegramId);
+                log.info("update user[{}] apiKey, and try again", byTelegramId.getFishName());
+                fishApi.sendMessage(MessageParam.builder()
+                        .apiKey(byTelegramId.getApiKey())
+                        .content(content)
+                        .build());
+            } else {
+                throw e;
+            }
+        }
     }
 
 

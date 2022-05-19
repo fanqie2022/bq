@@ -21,4 +21,8 @@ public @Data class TelegramUser extends AbstractPersistable<Long> {
 
     private String apiKey;
 
+    private String fishName;
+
+    private String fishPassword;
+
 }
